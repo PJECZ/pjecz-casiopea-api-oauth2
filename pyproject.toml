@@ -1,0 +1,54 @@
+[project]
+name = "pjecz-casiopea-api-oauth2"
+version = "0.1.0"
+description = "API con autentificación OAuth2 para el sistema de citas."
+authors = [
+    {name = "Guillermo Valdes",email = "guillermo@movimientolibre.com"}
+]
+license = {text = "AGPL3"}
+readme = "README.md"
+requires-python = ">=3.11,<4.0"
+dependencies = [
+    "fastapi (>=0.115.12,<0.116.0)",
+    "fastapi-pagination[sqlalchemy] (>=0.13.1,<0.14.0)",
+    "google-auth (>=2.39.0,<3.0.0)",
+    "google-cloud (>=0.34.0,<0.35.0)",
+    "google-cloud-secret-manager (>=2.23.3,<3.0.0)",
+    "google-cloud-storage (>=3.1.0,<4.0.0)",
+    "gunicorn (>=23.0.0,<24.0.0)",
+    "hashids (>=1.3.1,<2.0.0)",
+    "passlib[bcrypt] (>=1.7.4,<2.0.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)",
+    "pydantic (>=2.11.3,<3.0.0)",
+    "pydantic-settings (>=2.9.1,<3.0.0)",
+    "pyjwt (>=2.10.1,<3.0.0)",
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "sqlalchemy (>=2.0.40,<3.0.0)",
+    "sqlalchemy-utils (>=0.41.2,<0.42.0)",
+    "unidecode (>=1.4.0,<2.0.0)",
+    "uvicorn (>=0.34.2,<0.35.0)"
+]
+
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+isort = "^6.0.1"
+pre-commit = "^4.2.0"
+pylint = "^3.3.6"
+pylint-sqlalchemy = "^0.3.0"
+pytest = "^8.3.5"
+requests = "^2.32.3"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 128
+
+[tool.isort]
+line_length = 128
+profile = "black"
