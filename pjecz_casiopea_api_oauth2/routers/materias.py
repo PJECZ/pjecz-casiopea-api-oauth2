@@ -1,0 +1,19 @@
+"""
+Materias, routers
+"""
+
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi_pagination.ext.sqlalchemy import paginate
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+
+from ..dependencies.authentications import get_current_active_user
+from ..dependencies.database import Session, get_db
+from ..dependencies.fastapi_pagination_custom_page import CustomPage
+from ..dependencies.safe_string import safe_clave
+from ..models.materias import Materia
+from ..schemas.cit_clientes import CitClienteInDB
+from ..schemas.materias import MateriaOut, OneMateriaOut
+
+materias = APIRouter(prefix="/api/v5/materias")
