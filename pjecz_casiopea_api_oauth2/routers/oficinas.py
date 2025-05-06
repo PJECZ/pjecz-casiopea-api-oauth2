@@ -20,17 +20,6 @@ from ..schemas.oficinas import OficinaOut, OneOficinaOut
 oficinas = APIRouter(prefix="/api/v5/oficinas")
 
 
-@oficinas.get("", response_model=CustomPage[OficinaOut])
-async def paginado_oficinas(
-    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
-    database: Annotated[Session, Depends(get_db)],
-):
-    """Paginado de oficinas"""
-    if current_user.permissions.get("OFICINAS", 0) < Permiso.VER:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    return paginate(database.query(Oficina).filter_by(estatus="A").order_by(Oficina.clave))
-
-
 @oficinas.get("/{clave}", response_model=OneOficinaOut)
 async def detalle_oficinas(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
@@ -51,3 +40,14 @@ async def detalle_oficinas(
     if oficina.estatus != "A":
         return OneOficinaOut(success=False, message="No está habilitada esa oficina")
     return OneOficinaOut(success=True, message=f"Detalle de {clave}", data=OficinaOut.model_validate(oficina))
+
+
+@oficinas.get("", response_model=CustomPage[OficinaOut])
+async def paginado_oficinas(
+    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
+    database: Annotated[Session, Depends(get_db)],
+):
+    """Paginado de oficinas"""
+    if current_user.permissions.get("OFICINAS", 0) < Permiso.VER:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    return paginate(database.query(Oficina).filter_by(estatus="A").order_by(Oficina.clave))

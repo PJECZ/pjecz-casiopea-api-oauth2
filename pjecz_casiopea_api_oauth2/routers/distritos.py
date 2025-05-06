@@ -20,17 +20,6 @@ from ..schemas.distritos import DistritoOut, OneDistritoOut
 distritos = APIRouter(prefix="/api/v5/distritos")
 
 
-@distritos.get("", response_model=CustomPage[DistritoOut])
-async def paginado_distritos(
-    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
-    database: Annotated[Session, Depends(get_db)],
-):
-    """Paginado de distritos"""
-    if current_user.permissions.get("DISTRITOS", 0) < Permiso.VER:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    return paginate(database.query(Distrito).filter_by(estatus="A").order_by(Distrito.clave))
-
-
 @distritos.get("/{clave}", response_model=OneDistritoOut)
 async def detalle_distritos(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
@@ -51,3 +40,14 @@ async def detalle_distritos(
     if distrito.estatus != "A":
         return OneDistritoOut(success=False, message="No está habilitado esa distrito")
     return OneDistritoOut(success=True, message=f"Detalle de {clave}", data=DistritoOut.model_validate(distrito))
+
+
+@distritos.get("", response_model=CustomPage[DistritoOut])
+async def paginado_distritos(
+    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
+    database: Annotated[Session, Depends(get_db)],
+):
+    """Paginado de distritos"""
+    if current_user.permissions.get("DISTRITOS", 0) < Permiso.VER:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    return paginate(database.query(Distrito).filter_by(estatus="A").order_by(Distrito.clave))

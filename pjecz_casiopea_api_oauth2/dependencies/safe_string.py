@@ -3,6 +3,7 @@ Safe string
 """
 
 import re
+import uuid
 
 from unidecode import unidecode
 
@@ -137,3 +138,11 @@ def safe_telefono(input_str) -> str:
     if len(only_digits) == 10:
         return only_digits
     return ""
+
+
+def safe_uuid(uuid_string: str) -> uuid.UUID:
+    """Safe UUID"""
+    try:
+        return uuid.UUID(uuid_string)
+    except ValueError:
+        raise ValueError(f"Invalid UUID: {uuid_string}")

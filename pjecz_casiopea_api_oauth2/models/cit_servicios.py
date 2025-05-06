@@ -28,8 +28,8 @@ class CitServicio(Base, UniversalMixin):
     cit_categoria: Mapped["CitCategoria"] = relationship(back_populates="cit_servicios")
 
     # Columnas
-    clave: Mapped[str] = mapped_column(String(32), unique=True)
-    descripcion: Mapped[str] = mapped_column(String(64))
+    clave: Mapped[str] = mapped_column(String(16), unique=True)
+    descripcion: Mapped[str] = mapped_column(String(256))
     duracion: Mapped[time]
     documentos_limite: Mapped[int]
     desde: Mapped[Optional[time]]

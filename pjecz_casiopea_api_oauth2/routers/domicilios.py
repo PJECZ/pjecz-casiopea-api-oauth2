@@ -20,22 +20,11 @@ from ..schemas.domicilios import DomicilioOut, OneDomicilioOut
 domicilios = APIRouter(prefix="/api/v5/domicilios")
 
 
-@domicilios.get("", response_model=CustomPage[DomicilioOut])
-async def paginado_domicilios(
-    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
-    database: Annotated[Session, Depends(get_db)],
-):
-    """Paginado de domicilios"""
-    if current_user.permissions.get("DOMICILIOS", 0) < Permiso.VER:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    return paginate(database.query(Domicilio).filter_by(estatus="A").order_by(Domicilio.edificio))
-
-
-@domicilios.get("/{clave}", response_model=OneDomicilioOut)
+@domicilios.get("/{domicilio_id}", response_model=OneDomicilioOut)
 async def detalle_domicilios(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
-    clave: str,
+    domicilio_id: str,
 ):
     """Detalle de un domicilio a partir de su clave"""
     if current_user.permissions.get("DOMICILIOS", 0) < Permiso.VER:
@@ -51,3 +40,14 @@ async def detalle_domicilios(
     if domicilio.estatus != "A":
         return OneDomicilioOut(success=False, message="No está habilitado esa domicilio")
     return OneDomicilioOut(success=True, message=f"Detalle de {clave}", data=DomicilioOut.model_validate(domicilio))
+
+
+@domicilios.get("", response_model=CustomPage[DomicilioOut])
+async def paginado_domicilios(
+    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
+    database: Annotated[Session, Depends(get_db)],
+):
+    """Paginado de domicilios"""
+    if current_user.permissions.get("DOMICILIOS", 0) < Permiso.VER:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    return paginate(database.query(Domicilio).filter_by(estatus="A").order_by(Domicilio.edificio))

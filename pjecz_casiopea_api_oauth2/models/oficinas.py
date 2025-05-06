@@ -28,8 +28,8 @@ class Oficina(Base, UniversalMixin):
     domicilio: Mapped["Domicilio"] = relationship(back_populates="oficinas")
 
     # Columnas
-    clave: Mapped[str] = mapped_column(String(32), unique=True)
-    descripcion: Mapped[str] = mapped_column(String(512))
+    clave: Mapped[str] = mapped_column(String(16), unique=True)
+    descripcion: Mapped[str] = mapped_column(String(256))
     descripcion_corta: Mapped[str] = mapped_column(String(64))
     es_jurisdiccional: Mapped[bool] = mapped_column(default=False)
     puede_agendar_citas: Mapped[bool] = mapped_column(default=False)

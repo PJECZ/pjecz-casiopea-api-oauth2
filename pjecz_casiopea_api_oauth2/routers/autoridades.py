@@ -20,17 +20,6 @@ from ..schemas.cit_clientes import CitClienteInDB
 autoridades = APIRouter(prefix="/api/v5/autoridades")
 
 
-@autoridades.get("", response_model=CustomPage[AutoridadOut])
-async def paginado_autoridades(
-    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
-    database: Annotated[Session, Depends(get_db)],
-):
-    """Paginado de autoridades"""
-    if current_user.permissions.get("AUTORIDADES", 0) < Permiso.VER:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    return paginate(database.query(Autoridad).filter_by(estatus="A").order_by(Autoridad.clave))
-
-
 @autoridades.get("/{clave}", response_model=OneAutoridadOut)
 async def detalle_autoridades(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
@@ -51,4 +40,15 @@ async def detalle_autoridades(
     if autoridad.estatus != "A":
         message = "No está habilitada esa autoridad"
         return OneAutoridadOut(success=False, message=message)
-    return OneAutoridadOut(success=True, message=f"Detalle de {clave}", data=AutoridadOut.model_validate(autoridad))
+    return OneAutoridadOut(success=True, message=f"Autoridad {clave}", data=AutoridadOut.model_validate(autoridad))
+
+
+@autoridades.get("", response_model=CustomPage[AutoridadOut])
+async def paginado_autoridades(
+    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
+    database: Annotated[Session, Depends(get_db)],
+):
+    """Paginado de autoridades"""
+    if current_user.permissions.get("AUTORIDADES", 0) < Permiso.VER:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    return paginate(database.query(Autoridad).filter_by(estatus="A").order_by(Autoridad.clave))

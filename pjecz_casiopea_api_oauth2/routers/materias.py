@@ -20,17 +20,6 @@ from ..schemas.materias import MateriaOut, OneMateriaOut
 materias = APIRouter(prefix="/api/v5/materias")
 
 
-@materias.get("", response_model=CustomPage[MateriaOut])
-async def paginado_materias(
-    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
-    database: Annotated[Session, Depends(get_db)],
-):
-    """Paginado de materias"""
-    if current_user.permissions.get("MATERIAS", 0) < Permiso.VER:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    return paginate(database.query(Materia).filter_by(estatus="A").order_by(Materia.clave))
-
-
 @materias.get("/{clave}", response_model=OneMateriaOut)
 async def detalle_materias(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
@@ -51,3 +40,14 @@ async def detalle_materias(
     if materia.estatus != "A":
         return OneMateriaOut(success=False, message="No está habilitada esa materia")
     return OneMateriaOut(success=True, message=f"Detalle de {clave}", data=MateriaOut.model_validate(materia))
+
+
+@materias.get("", response_model=CustomPage[MateriaOut])
+async def paginado_materias(
+    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
+    database: Annotated[Session, Depends(get_db)],
+):
+    """Paginado de materias"""
+    if current_user.permissions.get("MATERIAS", 0) < Permiso.VER:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    return paginate(database.query(Materia).filter_by(estatus="A").order_by(Materia.clave))
