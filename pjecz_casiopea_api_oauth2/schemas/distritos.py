@@ -10,7 +10,6 @@ from ..dependencies.schemas_base import OneBaseOut
 class DistritoOut(BaseModel):
     """Esquema para entregar distritos"""
 
-    id: str
     clave: str
     nombre: str
     nombre_corto: str

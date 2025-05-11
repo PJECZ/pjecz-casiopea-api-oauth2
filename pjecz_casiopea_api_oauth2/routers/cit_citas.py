@@ -25,7 +25,7 @@ async def detalle_cit_citas(
     database: Annotated[Session, Depends(get_db)],
     cit_cita_id: str,
 ):
-    """Detalle de una cita a partir de su ID"""
+    """Detalle de una cita a partir de su ID, DEBE SER SUYA"""
     if current_user.permissions.get("CIT CITAS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
@@ -39,11 +39,7 @@ async def detalle_cit_citas(
         return OneCitCitaOut(success=False, message="No está habilitada esa cita")
     if cit_cita.cit_cliente_id != current_user.id:
         return OneCitCitaOut(success=False, message="No le pertenece esa cita")
-    return OneCitCitaOut(
-        success=True,
-        message=f"Cita {cit_cita_id}",
-        data=CitCitaOut.model_validate(cit_cita),
-    )
+    return OneCitCitaOut(success=True, message=f"Cita {cit_cita_id}", data=CitCitaOut.model_validate(cit_cita))
 
 
 @cit_citas.get("", response_model=CustomPage[CitCitaOut])

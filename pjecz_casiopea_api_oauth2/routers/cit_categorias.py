@@ -39,11 +39,7 @@ async def detalle_cit_categorias(
         return OneCitCategoriaOut(success=False, message="No existe esa categoria")
     if cit_categoria.estatus != "A":
         return OneCitCategoriaOut(success=False, message="No está habilitada esa categoria")
-    return OneCitCategoriaOut(
-        success=True,
-        message=f"Categoría {clave}",
-        data=CitCategoriaOut.model_validate(cit_categoria),
-    )
+    return OneCitCategoriaOut(success=True, message=f"Categoría {clave}", data=CitCategoriaOut.model_validate(cit_categoria))
 
 
 @cit_categorias.get("", response_model=CustomPage[CitCategoriaOut])

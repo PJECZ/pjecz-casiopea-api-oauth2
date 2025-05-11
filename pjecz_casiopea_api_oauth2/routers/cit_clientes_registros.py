@@ -23,7 +23,7 @@ async def detalle_cit_clientes_registros(
     database: Annotated[Session, Depends(get_db)],
     cit_cliente_registro_id: str,
 ):
-    """Detalle de una registro a partir de su ID"""
+    """Detalle de un registro a partir de su ID"""
     if current_user.permissions.get("CIT CLIENTES REGISTROS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:

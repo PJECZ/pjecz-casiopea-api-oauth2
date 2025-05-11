@@ -2,6 +2,8 @@
 Cit Clientes, esquemas de pydantic
 """
 
+import uuid
+
 from pydantic import BaseModel, ConfigDict
 
 from ..dependencies.schemas_base import OneBaseOut
@@ -10,7 +12,6 @@ from ..dependencies.schemas_base import OneBaseOut
 class CitClienteOut(BaseModel):
     """Esquema para entregar clientes"""
 
-    id: str
     nombres: str
     apellido_primero: str
     apellido_segundo: str
@@ -26,6 +27,7 @@ class CitClienteOut(BaseModel):
 class CitClienteInDB(CitClienteOut):
     """Cliente en base de datos"""
 
+    id: uuid.UUID
     username: str
     permissions: dict
     hashed_password: str

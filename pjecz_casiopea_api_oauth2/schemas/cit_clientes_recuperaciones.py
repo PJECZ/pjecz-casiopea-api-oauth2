@@ -12,7 +12,6 @@ from ..dependencies.schemas_base import OneBaseOut
 class CitClienteRecuperacionOut(BaseModel):
     """Esquema para entregar recuperaciones"""
 
-    id: str
     relacion_id: str
     relacion_nombre: str
     fecha: date

@@ -29,7 +29,6 @@ async def detalle_cit_clientes(
     if current_user.email != email:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No es su e-mail")
     data = CitClienteOut(
-        id=current_user.id,
         nombres=current_user.nombres,
         apellido_primero=current_user.apellido_primero,
         apellido_segundo=current_user.apellido_segundo,
