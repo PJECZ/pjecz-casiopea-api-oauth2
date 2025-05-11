@@ -24,7 +24,7 @@ class Oficina(Base, UniversalMixin):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # Claves foráneas
-    domicilio_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("domicilios.id"), index=True)
+    domicilio_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("domicilios.id"))
     domicilio: Mapped["Domicilio"] = relationship(back_populates="oficinas")
 
     # Columnas

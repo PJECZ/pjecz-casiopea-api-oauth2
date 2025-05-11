@@ -23,7 +23,7 @@ class CitClienteRecuperacion(Base, UniversalMixin):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # Clave foránea
-    cit_cliente_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cit_clientes.id"), index=True)
+    cit_cliente_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cit_clientes.id"))
     cit_cliente: Mapped["CitCliente"] = relationship(back_populates="cit_clientes_recuperaciones")
 
     # Columnas

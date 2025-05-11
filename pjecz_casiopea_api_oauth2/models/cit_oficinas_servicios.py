@@ -22,9 +22,9 @@ class CitOficinaServicio(Base, UniversalMixin):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # Claves foráneas
-    cit_servicio_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cit_servicios.id"), index=True)
+    cit_servicio_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cit_servicios.id"))
     cit_servicio: Mapped["CitServicio"] = relationship(back_populates="cit_oficinas_servicios")
-    oficina_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("oficinas.id"), index=True)
+    oficina_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("oficinas.id"))
     oficina: Mapped["Oficina"] = relationship(back_populates="cit_oficinas_servicios")
 
     # Columnas

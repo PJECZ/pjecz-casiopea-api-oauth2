@@ -9,11 +9,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_pagination import add_pagination
 
+from .config.settings import Settings, get_settings
 from .dependencies.authentications import TOKEN_EXPIRES_SECONDS, authenticate_user, encode_token
 from .dependencies.database import Session, get_db
 from .dependencies.exceptions import MyAnyError
 from .schemas.cit_clientes import Token
-from .settings import Settings, get_settings
 
 # FastAPI
 app = FastAPI(
@@ -27,7 +27,7 @@ app = FastAPI(
 settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.origins.split(","),
+    allow_origins=settings.ORIGINS.split(","),
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
