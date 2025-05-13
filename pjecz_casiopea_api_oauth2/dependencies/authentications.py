@@ -79,7 +79,7 @@ def authenticate_user(username: str, password: str, database: Session = Depends(
 
 def encode_token(settings: Settings, cit_cliente: CitClienteInDB) -> str:
     """Crear el token"""
-    expiration_dt = datetime.now(timezone.utc) + timedelta(seconds=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expiration_dt = datetime.now(timezone.utc) + timedelta(seconds=settings.ACCESS_TOKEN_EXPIRE_SECONDS)
     expires_at = expiration_dt.timestamp()
     payload = {"username": cit_cliente.email, "expires_at": expires_at}
     return jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm=settings.ALGORITHM)

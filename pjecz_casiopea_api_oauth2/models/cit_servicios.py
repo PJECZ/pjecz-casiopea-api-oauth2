@@ -43,6 +43,11 @@ class CitServicio(Base, UniversalMixin):
     )
 
     @property
+    def cit_categoria_clave(self):
+        """Clave de la categoria"""
+        return self.cit_categoria.clave
+
+    @property
     def cit_categoria_nombre(self):
         """Nombre de la categoria"""
         return self.cit_categoria.nombre

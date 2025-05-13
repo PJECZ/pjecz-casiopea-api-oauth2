@@ -36,7 +36,7 @@ def get_secret(secret_id: str) -> str:
 class Settings(BaseSettings):
     """Settings"""
 
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = get_secret("ACCESS_TOKEN_EXPIRE_MINUTES")
+    ACCESS_TOKEN_EXPIRE_SECONDS: int = get_secret("ACCESS_TOKEN_EXPIRE_SECONDS")
     ALGORITHM: str = os.getenv("ALGORITHM")
     DB_HOST: str = get_secret("db_host")
     DB_PORT: int = get_secret("db_port")
