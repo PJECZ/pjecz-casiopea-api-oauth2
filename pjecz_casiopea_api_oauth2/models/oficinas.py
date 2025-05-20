@@ -24,12 +24,12 @@ class Oficina(Base, UniversalMixin):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # Claves foráneas
-    domicilio_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("domicilios.id"), index=True)
+    domicilio_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("domicilios.id"))
     domicilio: Mapped["Domicilio"] = relationship(back_populates="oficinas")
 
     # Columnas
-    clave: Mapped[str] = mapped_column(String(32), unique=True)
-    descripcion: Mapped[str] = mapped_column(String(512))
+    clave: Mapped[str] = mapped_column(String(16), unique=True)
+    descripcion: Mapped[str] = mapped_column(String(256))
     descripcion_corta: Mapped[str] = mapped_column(String(64))
     es_jurisdiccional: Mapped[bool] = mapped_column(default=False)
     puede_agendar_citas: Mapped[bool] = mapped_column(default=False)

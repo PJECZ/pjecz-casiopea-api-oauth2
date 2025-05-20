@@ -9,16 +9,32 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_pagination import add_pagination
 
-from .dependencies.authentications import TOKEN_EXPIRES_SECONDS, authenticate_user, encode_token
+from .config.settings import Settings, get_settings
+from .dependencies.authentications import authenticate_user, encode_token
 from .dependencies.database import Session, get_db
 from .dependencies.exceptions import MyAnyError
+from .routers.autoridades import autoridades
+from .routers.cit_categorias import cit_categorias
+from .routers.cit_citas import cit_citas
+from .routers.cit_clientes import cit_clientes
+from .routers.cit_clientes_recuperaciones import cit_clientes_recuperaciones
+from .routers.cit_clientes_registros import cit_clientes_registros
+from .routers.cit_dias_disponibles import cit_dias_disponibles
+from .routers.cit_dias_inhabiles import cit_dias_inhabiles
+from .routers.cit_horas_bloqueadas import cit_horas_bloqueadas
+from .routers.cit_horas_disponibles import cit_horas_disponibles
+from .routers.cit_oficinas_servicios import cit_oficinas_servicios
+from .routers.cit_servicios import cit_servicios
+from .routers.distritos import distritos
+from .routers.domicilios import domicilios
+from .routers.materias import materias
+from .routers.oficinas import oficinas
 from .schemas.cit_clientes import Token
-from .settings import Settings, get_settings
 
 # FastAPI
 app = FastAPI(
-    title="PJECZ Citas Cliente API OAuth2",
-    description="API del sistema de citas para la interfaz del cliente.",
+    title="PJECZ Casiopea API OAuth2",
+    description="API OAuth2 del sistema de citas.",
     docs_url="/docs",
     redoc_url=None,
 )
@@ -27,11 +43,30 @@ app = FastAPI(
 settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.origins.split(","),
+    allow_origins=settings.ORIGINS.split(","),
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+# Rutas
+app.include_router(autoridades, tags=["autoridades"])
+app.include_router(cit_categorias, tags=["citas"])
+app.include_router(cit_citas, tags=["citas"])
+app.include_router(cit_clientes, tags=["citas"])
+app.include_router(cit_clientes_recuperaciones, tags=["citas"])
+app.include_router(cit_clientes_registros, tags=["citas"])
+app.include_router(cit_dias_disponibles, tags=["citas"])
+app.include_router(cit_dias_inhabiles, tags=["citas"])
+app.include_router(cit_horas_disponibles, tags=["citas"])
+app.include_router(cit_horas_bloqueadas, tags=["citas"])
+app.include_router(cit_oficinas_servicios, tags=["citas"])
+app.include_router(cit_servicios, tags=["citas"])
+app.include_router(distritos, tags=["autoridades"])
+app.include_router(domicilios, tags=["oficinas"])
+app.include_router(oficinas, tags=["oficinas"])
+app.include_router(materias, tags=["autoridades"])
+app.include_router(oficinas, tags=["oficinas"])
 
 # Paginación
 add_pagination(app)
@@ -41,7 +76,7 @@ add_pagination(app)
 @app.get("/")
 async def root():
     """Mensaje de Bienvenida"""
-    return {"message": "API con autentificación para realizar operaciones con la base de datos del sistema de citas."}
+    return {"message": "API OAuth2 del sistema de citas."}
 
 
 @app.post("/token", response_model=Token)
@@ -61,7 +96,7 @@ async def login(
         )
     return Token(
         access_token=encode_token(settings=settings, cit_cliente=cit_cliente),
-        expires_in=TOKEN_EXPIRES_SECONDS,
+        expires_in=settings.ACCESS_TOKEN_EXPIRE_SECONDS,
         token_type="bearer",
         username=cit_cliente.username,
     )

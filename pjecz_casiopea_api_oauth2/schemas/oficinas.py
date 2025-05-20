@@ -10,13 +10,11 @@ from ..dependencies.schemas_base import OneBaseOut
 class OficinaOut(BaseModel):
     """Esquema para entregar oficinas"""
 
-    id: str
-    domicilio_id: str
-    domicilio_completo: str
-    domicilio_edificio: str
     clave: str
     descripcion: str
     descripcion_corta: str
+    domicilio_completo: str
+    domicilio_edificio: str
     es_jurisdiccional: bool
     model_config = ConfigDict(from_attributes=True)
 

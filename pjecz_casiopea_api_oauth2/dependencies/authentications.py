@@ -12,16 +12,14 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 
+from ..config.settings import Settings, get_settings
 from ..models.cit_clientes import CitCliente
 from ..schemas.cit_clientes import CitClienteInDB
-from ..settings import Settings, get_settings
 from .database import Session, get_db
 from .exceptions import MyAnyError, MyAuthenticationError, MyIsDeletedError, MyNotExistsError, MyNotValidParamError
 from .safe_string import safe_email
 
-ALGORITHM = "HS256"
 PASSWORD_REGEXP = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,24}$"
-TOKEN_EXPIRES_SECONDS = 3600  # 1 hora
 
 # Autentificar con OAuth2 y solicitar token en @app.post("/token", response_model=Token)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -81,16 +79,16 @@ def authenticate_user(username: str, password: str, database: Session = Depends(
 
 def encode_token(settings: Settings, cit_cliente: CitClienteInDB) -> str:
     """Crear el token"""
-    expiration_dt = datetime.now(timezone.utc) + timedelta(seconds=TOKEN_EXPIRES_SECONDS)
+    expiration_dt = datetime.now(timezone.utc) + timedelta(seconds=settings.ACCESS_TOKEN_EXPIRE_SECONDS)
     expires_at = expiration_dt.timestamp()
     payload = {"username": cit_cliente.email, "expires_at": expires_at}
-    return jwt.encode(payload=payload, key=settings.secret_key, algorithm=ALGORITHM)
+    return jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
 def decode_token(token: str, settings: Settings) -> dict:
     """Decodificar el token"""
     try:
-        payload = jwt.decode(jwt=token, key=settings.secret_key, algorithms=[ALGORITHM])
+        payload = jwt.decode(jwt=token, key=settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
     except jwt.ExpiredSignatureError as error:
         raise MyAuthenticationError("No es válido el token") from error
     if "expires_at" not in payload or payload["expires_at"] < datetime.now(timezone.utc).timestamp():

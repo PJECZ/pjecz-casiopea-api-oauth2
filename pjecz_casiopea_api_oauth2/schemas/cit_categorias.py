@@ -10,7 +10,7 @@ from ..dependencies.schemas_base import OneBaseOut
 class CitCategoriaOut(BaseModel):
     """Esquema para entregar categorías"""
 
-    id: str
+    clave: str
     nombre: str
     model_config = ConfigDict(from_attributes=True)
 

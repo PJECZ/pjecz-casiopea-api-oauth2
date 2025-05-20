@@ -12,7 +12,6 @@ from ..dependencies.schemas_base import OneBaseOut
 class CitDiaInhabilOut(BaseModel):
     """Esquema para entregar dias inhábiles"""
 
-    id: str
     fecha: date
     descripcion: str
     model_config = ConfigDict(from_attributes=True)

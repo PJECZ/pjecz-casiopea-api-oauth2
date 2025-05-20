@@ -22,7 +22,8 @@ class CitCategoria(Base, UniversalMixin):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # Columnas
-    nombre: Mapped[str] = mapped_column(String(64), unique=True)
+    clave: Mapped[str] = mapped_column(String(16), unique=True)
+    nombre: Mapped[str] = mapped_column(String(256))
 
     # Hijos
     cit_servicios: Mapped["CitServicio"] = relationship("CitServicio", back_populates="cit_categoria")

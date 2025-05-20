@@ -36,14 +36,16 @@ def get_secret(secret_id: str) -> str:
 class Settings(BaseSettings):
     """Settings"""
 
-    db_host: str = get_secret("db_host")
-    db_port: int = get_secret("db_port")
-    db_name: str = get_secret("db_name")
-    db_pass: str = get_secret("db_pass")
-    db_user: str = get_secret("db_user")
-    origins: str = get_secret("origins")
-    salt: str = get_secret("salt")
-    tz: str = "America/Mexico_City"
+    ACCESS_TOKEN_EXPIRE_SECONDS: int = get_secret("ACCESS_TOKEN_EXPIRE_SECONDS")
+    ALGORITHM: str = os.getenv("ALGORITHM")
+    DB_HOST: str = get_secret("db_host")
+    DB_PORT: int = get_secret("db_port")
+    DB_NAME: str = get_secret("db_name")
+    DB_PASS: str = get_secret("db_pass")
+    DB_USER: str = get_secret("db_user")
+    ORIGINS: str = get_secret("origins")
+    SECRET_KEY: str = get_secret("secret_key")
+    TZ: str = get_secret("tz")
 
     class Config:
         """Load configuration"""

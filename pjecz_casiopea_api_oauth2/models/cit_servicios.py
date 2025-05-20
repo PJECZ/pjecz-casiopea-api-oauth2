@@ -24,12 +24,12 @@ class CitServicio(Base, UniversalMixin):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # Clave foránea
-    cit_categoria_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cit_categorias.id"), index=True)
+    cit_categoria_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cit_categorias.id"))
     cit_categoria: Mapped["CitCategoria"] = relationship(back_populates="cit_servicios")
 
     # Columnas
-    clave: Mapped[str] = mapped_column(String(32), unique=True)
-    descripcion: Mapped[str] = mapped_column(String(64))
+    clave: Mapped[str] = mapped_column(String(16), unique=True)
+    descripcion: Mapped[str] = mapped_column(String(256))
     duracion: Mapped[time]
     documentos_limite: Mapped[int]
     desde: Mapped[Optional[time]]
@@ -41,6 +41,11 @@ class CitServicio(Base, UniversalMixin):
     cit_oficinas_servicios: Mapped[List["CitOficinaServicio"]] = relationship(
         "CitOficinaServicio", back_populates="cit_servicio"
     )
+
+    @property
+    def cit_categoria_clave(self):
+        """Clave de la categoria"""
+        return self.cit_categoria.clave
 
     @property
     def cit_categoria_nombre(self):
