@@ -22,6 +22,7 @@ from .routers.cit_clientes_registros import cit_clientes_registros
 from .routers.cit_dias_disponibles import cit_dias_disponibles
 from .routers.cit_dias_inhabiles import cit_dias_inhabiles
 from .routers.cit_horas_bloqueadas import cit_horas_bloqueadas
+from .routers.cit_horas_disponibles import cit_horas_disponibles
 from .routers.cit_oficinas_servicios import cit_oficinas_servicios
 from .routers.cit_servicios import cit_servicios
 from .routers.distritos import distritos
@@ -57,6 +58,7 @@ app.include_router(cit_clientes_recuperaciones, tags=["citas"])
 app.include_router(cit_clientes_registros, tags=["citas"])
 app.include_router(cit_dias_disponibles, tags=["citas"])
 app.include_router(cit_dias_inhabiles, tags=["citas"])
+app.include_router(cit_horas_disponibles, tags=["citas"])
 app.include_router(cit_horas_bloqueadas, tags=["citas"])
 app.include_router(cit_oficinas_servicios, tags=["citas"])
 app.include_router(cit_servicios, tags=["citas"])

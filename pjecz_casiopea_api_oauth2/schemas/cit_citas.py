@@ -20,7 +20,6 @@ class CitCitaCancelIn(BaseModel):
 class CitCitaIn(BaseModel):
     """Esquema para crear una cita"""
 
-    cit_cliente_email: str
     cit_servicio_clave: str
     fecha: date
     hora_minuto: time
@@ -33,8 +32,8 @@ class CitCitaOut(BaseModel):
 
     id: uuid.UUID
     cit_cliente_nombre: str
-    cit_cliente_curp: str
-    cit_cliente_email: str
+    # cit_cliente_curp: str
+    # cit_cliente_email: str
     cit_servicio_clave: str
     cit_servicio_descripcion: str
     oficina_clave: str

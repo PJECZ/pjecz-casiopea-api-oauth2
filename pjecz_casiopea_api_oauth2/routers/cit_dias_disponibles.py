@@ -22,15 +22,11 @@ LIMITE_DIAS = 90
 QUITAR_PRIMER_DIA_DESPUES_HORAS = 14
 
 
-@cit_dias_disponibles.get("", response_model=ListCitDiaDisponibleOut)
-async def paginado_cit_dias_disponibles(
-    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
-    database: Annotated[Session, Depends(get_db)],
-    settings: Annotated[Settings, Depends(get_settings)],
-):
-    """Días disponibles"""
-    if current_user.permissions.get("CIT DIAS DISPONIBLES", 0) < Permiso.VER:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+def listar_dias_disponibles(
+    database: Session,
+    settings: Settings,
+) -> list[date]:
+    """Listar los días disponibles"""
 
     # Consultar los días inhábiles
     cit_dias_inhabiles = (
@@ -66,8 +62,22 @@ async def paginado_cit_dias_disponibles(
         dias_disponibles.pop(0)
 
     # Entregar
+    return dias_disponibles
+
+
+@cit_dias_disponibles.get("", response_model=ListCitDiaDisponibleOut)
+async def paginado_cit_dias_disponibles(
+    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
+    database: Annotated[Session, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings)],
+):
+    """Días disponibles"""
+    if current_user.permissions.get("CIT DIAS DISPONIBLES", 0) < Permiso.VER:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+
+    # Entregar
     return ListCitDiaDisponibleOut(
         success=True,
         message="Listado de días disponibles",
-        data=dias_disponibles,
+        data=listar_dias_disponibles(database, settings),
     )

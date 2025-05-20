@@ -2,6 +2,8 @@
 Cit Días Disponibles, esquemas de pydantic
 """
 
+from datetime import date
+
 from pydantic import BaseModel
 
 
@@ -10,4 +12,4 @@ class ListCitDiaDisponibleOut(BaseModel):
 
     success: bool
     message: str
-    data: list | None = None
+    data: list[date] | None = None

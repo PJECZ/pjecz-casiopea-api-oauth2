@@ -23,6 +23,7 @@ class Domicilio(Base, UniversalMixin):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     # Columnas
+    clave: Mapped[str] = mapped_column(String(16), unique=True)
     edificio: Mapped[str] = mapped_column(String(64), unique=True)
     estado: Mapped[str] = mapped_column(String(64))
     municipio: Mapped[str] = mapped_column(String(64))

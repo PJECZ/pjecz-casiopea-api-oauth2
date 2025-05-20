@@ -33,15 +33,11 @@ async def paginado_cit_oficinas_servicios(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     consulta = database.query(CitOficinaServicio)
     if cit_servicio_clave is not None:
-        try:
-            cit_servicio_clave = safe_clave(cit_servicio_clave)
-        except ValueError:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No es válida la clave de la oficina")
-        consulta = consulta.join(CitServicio).filter(CitServicio.clave == cit_servicio_clave)
+        cit_servicio_clave = safe_clave(cit_servicio_clave)
+        if cit_servicio_clave != "":
+            consulta = consulta.join(CitServicio).filter(CitServicio.clave == cit_servicio_clave)
     if oficina_clave is not None:
-        try:
-            oficina_clave = safe_clave(oficina_clave)
-        except ValueError:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No es válida la clave de la oficina")
-        consulta = consulta.join(Oficina).filter(Oficina.clave == oficina_clave)
-    return paginate(consulta.filter_by(estatus="A").order_by(CitOficinaServicio.creado.desc()))
+        oficina_clave = safe_clave(oficina_clave)
+        if oficina_clave != "":
+            consulta = consulta.join(Oficina).filter(Oficina.clave == oficina_clave)
+    return paginate(consulta.filter(CitOficinaServicio.estatus == "A").order_by(CitOficinaServicio.creado.desc()))

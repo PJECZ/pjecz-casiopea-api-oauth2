@@ -35,7 +35,7 @@ async def detalle_materias(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No es válida la clave")
     try:
         materia = database.query(Materia).filter_by(clave=clave).one()
-    except (MultipleResultsFound, NoResultFound) as error:
+    except (MultipleResultsFound, NoResultFound):
         return OneMateriaOut(success=False, message="No existe esa materia")
     if materia.estatus != "A":
         return OneMateriaOut(success=False, message="No está habilitada esa materia")
