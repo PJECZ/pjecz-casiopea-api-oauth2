@@ -22,7 +22,7 @@ cit_servicios = APIRouter(prefix="/api/v5/cit_servicios")
 
 
 @cit_servicios.get("/{clave}", response_model=OneCitServicioOut)
-async def detalle_cit_servicios(
+async def detalle(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     clave: str,
@@ -36,7 +36,7 @@ async def detalle_cit_servicios(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No es válida la clave")
     try:
         cit_servicio = database.query(CitServicio).filter_by(clave=clave).one()
-    except (MultipleResultsFound, NoResultFound) as error:
+    except (MultipleResultsFound, NoResultFound):
         return OneCitServicioOut(success=False, message="No existe ese servicio")
     if cit_servicio.estatus != "A":
         return OneCitServicioOut(success=False, message="No está habilitado ese servicio")
@@ -44,7 +44,7 @@ async def detalle_cit_servicios(
 
 
 @cit_servicios.get("", response_model=CustomPage[CitServicioOut])
-async def paginado_cit_servicios(
+async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     cit_categoria_clave: str = None,

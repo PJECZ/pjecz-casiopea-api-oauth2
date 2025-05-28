@@ -11,7 +11,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from ..dependencies.authentications import get_current_active_user
 from ..dependencies.database import Session, get_db
 from ..dependencies.fastapi_pagination_custom_page import CustomPage
-from ..dependencies.safe_string import safe_clave, safe_string
+from ..dependencies.safe_string import safe_clave
 from ..models.domicilios import Domicilio
 from ..models.oficinas import Oficina
 from ..models.permisos import Permiso
@@ -22,7 +22,7 @@ oficinas = APIRouter(prefix="/api/v5/oficinas")
 
 
 @oficinas.get("/{clave}", response_model=OneOficinaOut)
-async def detalle_oficinas(
+async def detalle(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     clave: str,
@@ -44,7 +44,7 @@ async def detalle_oficinas(
 
 
 @oficinas.get("", response_model=CustomPage[OficinaOut])
-async def paginado_oficinas(
+async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     domicilio_clave: str = None,

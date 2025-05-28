@@ -13,12 +13,12 @@ from ..config.settings import Settings, get_settings
 from ..dependencies.authentications import get_current_active_user
 from ..dependencies.database import Session, get_db
 from ..dependencies.fastapi_pagination_custom_page import CustomPage
-from ..dependencies.safe_string import safe_clave, safe_uuid
+from ..dependencies.safe_string import safe_clave
 from ..models.cit_horas_bloqueadas import CitHoraBloqueada
 from ..models.oficinas import Oficina
 from ..models.permisos import Permiso
 from ..schemas.cit_clientes import CitClienteInDB
-from ..schemas.cit_horas_bloqueadas import CitHoraBloqueadaOut, OneCitHoraBloqueadaOut
+from ..schemas.cit_horas_bloqueadas import CitHoraBloqueadaOut
 
 LIMITE_DIAS = 30
 
@@ -26,7 +26,7 @@ cit_horas_bloqueadas = APIRouter(prefix="/api/v5/cit_horas_bloqueadas")
 
 
 @cit_horas_bloqueadas.get("", response_model=CustomPage[CitHoraBloqueadaOut])
-async def paginado_cit_horas_bloqueadas(
+async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     settings: Annotated[Settings, Depends(get_settings)],

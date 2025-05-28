@@ -66,7 +66,7 @@ def listar_dias_disponibles(
 
 
 @cit_dias_disponibles.get("", response_model=ListCitDiaDisponibleOut)
-async def paginado_cit_dias_disponibles(
+async def listado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     settings: Annotated[Settings, Depends(get_settings)],

@@ -21,7 +21,7 @@ cit_dias_inhabiles = APIRouter(prefix="/api/v5/cit_dias_inhabiles")
 
 
 @cit_dias_inhabiles.get("/{fecha}", response_model=OneCitDiaInhabilOut)
-async def detalle_cit_dias_inhabiles(
+async def detalle(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     fecha: date,
@@ -43,7 +43,7 @@ async def detalle_cit_dias_inhabiles(
 
 
 @cit_dias_inhabiles.get("", response_model=CustomPage[CitDiaInhabilOut])
-async def paginado_cit_dias_inhabiles(
+async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     desde: date = None,

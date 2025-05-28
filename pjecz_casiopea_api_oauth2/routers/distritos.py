@@ -21,7 +21,7 @@ distritos = APIRouter(prefix="/api/v5/distritos")
 
 
 @distritos.get("/{clave}", response_model=OneDistritoOut)
-async def detalle_distritos(
+async def detalle(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     clave: str,
@@ -43,7 +43,7 @@ async def detalle_distritos(
 
 
 @distritos.get("", response_model=CustomPage[DistritoOut])
-async def paginado_distritos(
+async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
 ):

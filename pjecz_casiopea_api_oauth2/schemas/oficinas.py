@@ -13,6 +13,7 @@ class OficinaOut(BaseModel):
     clave: str
     descripcion: str
     descripcion_corta: str
+    domicilio_clave: str
     domicilio_completo: str
     domicilio_edificio: str
     es_jurisdiccional: bool
