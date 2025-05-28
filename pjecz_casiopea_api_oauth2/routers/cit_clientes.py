@@ -15,7 +15,7 @@ cit_clientes = APIRouter(prefix="/api/v5/cit_clientes")
 
 
 @cit_clientes.get("/{email}", response_model=OneCitClienteOut)
-async def detalle_cit_clientes(
+async def detalle(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     email: str,
 ):

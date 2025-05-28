@@ -44,6 +44,11 @@ class Oficina(Base, UniversalMixin):
     cit_oficinas_servicios: Mapped[List["CitOficinaServicio"]] = relationship("CitOficinaServicio", back_populates="oficina")
 
     @property
+    def domicilio_clave(self):
+        """Clave de la oficina"""
+        return self.domicilio.clave
+
+    @property
     def domicilio_completo(self):
         """Domicilio completo de la oficina"""
         return self.domicilio.completo

@@ -21,7 +21,7 @@ cit_categorias = APIRouter(prefix="/api/v5/cit_categorias")
 
 
 @cit_categorias.get("/{clave}", response_model=OneCitCategoriaOut)
-async def detalle_cit_categorias(
+async def detalle(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     clave: str,
@@ -35,7 +35,7 @@ async def detalle_cit_categorias(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No es válida la clave")
     try:
         cit_categoria = database.query(CitCategoria).filter_by(clave=clave).one()
-    except (MultipleResultsFound, NoResultFound) as error:
+    except (MultipleResultsFound, NoResultFound):
         return OneCitCategoriaOut(success=False, message="No existe esa categoria")
     if cit_categoria.estatus != "A":
         return OneCitCategoriaOut(success=False, message="No está habilitada esa categoria")
@@ -43,7 +43,7 @@ async def detalle_cit_categorias(
 
 
 @cit_categorias.get("", response_model=CustomPage[CitCategoriaOut])
-async def paginado_cit_categorias(
+async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
 ):

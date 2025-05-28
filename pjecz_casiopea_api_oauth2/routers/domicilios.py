@@ -20,8 +20,8 @@ from ..schemas.domicilios import DomicilioOut, OneDomicilioOut
 domicilios = APIRouter(prefix="/api/v5/domicilios")
 
 
-@domicilios.get("/{domicilio_id}", response_model=OneDomicilioOut)
-async def detalle_domicilios(
+@domicilios.get("/{clave}", response_model=OneDomicilioOut)
+async def detalle(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     clave: str,
@@ -43,7 +43,7 @@ async def detalle_domicilios(
 
 
 @domicilios.get("", response_model=CustomPage[DomicilioOut])
-async def paginado_domicilios(
+async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
 ):

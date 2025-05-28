@@ -146,7 +146,7 @@ def listar_horas_disponibles(
 
 
 @cit_horas_disponibles.get("", response_model=ListCitHoraDisponibleOut)
-async def paginado_cit_horas_disponibles(
+async def listado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     settings: Annotated[Settings, Depends(get_settings)],

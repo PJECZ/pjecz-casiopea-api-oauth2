@@ -32,8 +32,6 @@ class CitCitaOut(BaseModel):
 
     id: uuid.UUID
     cit_cliente_nombre: str
-    # cit_cliente_curp: str
-    # cit_cliente_email: str
     cit_servicio_clave: str
     cit_servicio_descripcion: str
     oficina_clave: str

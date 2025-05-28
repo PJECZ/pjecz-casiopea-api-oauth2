@@ -32,7 +32,7 @@ cit_citas = APIRouter(prefix="/api/v5/cit_citas")
 
 
 @cit_citas.patch("/cancelar", response_model=OneCitCitaOut)
-async def cancelar_cit_citas(
+async def cancelar(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     cit_cita_id: str,
@@ -78,7 +78,7 @@ async def cancelar_cit_citas(
 
 
 @cit_citas.post("/crear", response_model=OneCitCitaOut)
-async def crear_cit_citas(
+async def crear(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     settings: Annotated[Settings, Depends(get_settings)],
@@ -232,7 +232,7 @@ async def crear_cit_citas(
 
 
 @cit_citas.get("/disponibles", response_model=int)
-async def disponibles_cit_citas(
+async def disponibles(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
 ):
@@ -261,7 +261,7 @@ async def disponibles_cit_citas(
 
 
 @cit_citas.get("/{cit_cita_id}", response_model=OneCitCitaOut)
-async def detalle_cit_citas(
+async def detalle(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     cit_cita_id: str,
@@ -284,7 +284,7 @@ async def detalle_cit_citas(
 
 
 @cit_citas.get("", response_model=CustomPage[CitCitaOut])
-async def mis_cit_citas(
+async def mis_citas(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
 ):

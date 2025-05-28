@@ -20,7 +20,7 @@ cit_clientes_recuperaciones = APIRouter(prefix="/api/v5/cit_clientes_recuperacio
 
 
 @cit_clientes_recuperaciones.get("/{cit_cliente_recuperacion_id}", response_model=OneCitClienteRecuperacionOut)
-async def detalle_cit_clientes_recuperaciones(
+async def detalle(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
     cit_cliente_recuperacion_id: str,
@@ -47,7 +47,7 @@ async def detalle_cit_clientes_recuperaciones(
 
 
 @cit_clientes_recuperaciones.get("", response_model=CustomPage[CitClienteRecuperacionOut])
-async def paginado_cit_clientes_recuperaciones(
+async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
 ):
