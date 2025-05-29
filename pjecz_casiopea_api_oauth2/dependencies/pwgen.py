@@ -5,6 +5,9 @@ Generador de contraseñas
 import random
 import string
 
+CADENA_VALIDAR_REGEXP = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,24}$"
+CODIGO_ASISTENCIA_REGEXP = r"^\d{4,8}$"
+
 
 def generar_cadena_para_validar(largo: int = 24) -> str:
     """Generar cadena de texto aleatorio con minúsculas, mayúsculas y dígitos"""

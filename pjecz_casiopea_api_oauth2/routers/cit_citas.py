@@ -41,7 +41,7 @@ async def cancelar(
     if current_user.permissions.get("CIT CITAS", 0) < Permiso.CREAR:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
 
-    # Consultar cita
+    # Consultar, validar que le pertenezca, que no esté eliminada o que no sea PENDIENTE
     try:
         cit_cita_id = safe_uuid(cit_cita_id)
     except ValueError:
@@ -49,21 +49,18 @@ async def cancelar(
     cit_cita = database.query(CitCita).get(cit_cita_id)
     if not cit_cita:
         return OneCitCitaOut(success=False, message="No existe esa cita")
-    if cit_cita.estatus != "A":
-        return OneCitCitaOut(success=False, message="No está habilitada esa cita")
     if cit_cita.cit_cliente_id != current_user.id:
         return OneCitCitaOut(success=False, message="No le pertenece esa cita")
-
-    # Validar que el estado sea PENDIENTE
+    if cit_cita.estatus != "A":
+        return OneCitCitaOut(success=False, message="No está habilitada esa cita")
     if cit_cita.estado != "PENDIENTE":
         return OneCitCitaOut(success=False, message="No se puede cancelar esta cita porque no esta pendiente")
-
-    # Validar que se pueda cancelar
     if cit_cita.puede_cancelarse is False:
         raise ValueError("No se puede cancelar esta cita")
 
     # Actualizar
     cit_cita.estado = "CANCELO"
+    cit_cita.puede_cancelarse = False
     database.add(cit_cita)
     database.commit()
 
@@ -114,14 +111,14 @@ async def crear(
 
     # Validar que la oficina tenga el servicio dado
     try:
-        cit_oficinas_servicios = (
+        _ = (
             database.query(CitOficinaServicio)
             .filter_by(oficina_id=oficina.id)
             .filter_by(cit_servicio_id=cit_servicio.id)
             .filter_by(estatus="A")
             .one()
         )
-    except (MultipleResultsFound, NoResultFound):
+    except NoResultFound:
         return OneCitCitaOut(success=False, message="No se puede agendar el servicio en la oficina")
 
     # Validar que la fecha sea un día disponible

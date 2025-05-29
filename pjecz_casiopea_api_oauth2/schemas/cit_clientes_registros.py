@@ -46,14 +46,14 @@ class SolicitarCitClienteRegistroIn(BaseModel):
 
 
 class ValidarCitClienteRegistroIn(BaseModel):
-    """Esquema para recibir la contraseña de un cliente"""
+    """Esquema para recibir la validación del e-mail del cliente"""
 
     id: uuid.UUID
     cadena_validar: str
-    password: str
 
 
-class TerminarCitClienteRegistroIn(ValidarCitClienteRegistroIn):
+class TerminarCitClienteRegistroIn(BaseModel):
     """Esquema para recibir la contraseña de un cliente"""
 
+    id: uuid.UUID
     password: str
