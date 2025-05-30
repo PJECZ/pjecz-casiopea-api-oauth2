@@ -7,7 +7,6 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Annotated
 
-from dependencies.authentications import PASSWORD_REGEXP
 from fastapi import APIRouter, Depends, HTTPException, status
 from passlib.context import CryptContext
 
@@ -205,7 +204,7 @@ async def terminar(
         return OneCitClienteRegistroOut(success=False, message="No es igual la cadena de validación")
 
     # Si no es válido el password, causa error
-    if re.match(PASSWORD_REGEXP, terminar_cit_cliente_registro_in.password) is None:
+    if re.match(CADENA_VALIDAR_REGEXP, terminar_cit_cliente_registro_in.password) is None:
         return OneCitClienteRegistroOut(success=False, message="No es válido el password")
 
     # Cifrar la contrasena
