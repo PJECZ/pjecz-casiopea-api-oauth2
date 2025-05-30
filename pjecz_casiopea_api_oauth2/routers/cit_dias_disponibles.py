@@ -16,10 +16,10 @@ from ..models.permisos import Permiso
 from ..schemas.cit_clientes import CitClienteInDB
 from ..schemas.cit_dias_disponibles import ListCitDiaDisponibleOut
 
-cit_dias_disponibles = APIRouter(prefix="/api/v5/cit_dias_disponibles")
-
 LIMITE_DIAS = 90
 QUITAR_PRIMER_DIA_DESPUES_HORAS = 14
+
+cit_dias_disponibles = APIRouter(prefix="/api/v5/cit_dias_disponibles")
 
 
 def listar_dias_disponibles(

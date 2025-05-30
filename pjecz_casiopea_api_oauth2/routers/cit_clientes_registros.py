@@ -2,15 +2,18 @@
 Cit Clientes Registros, routers
 """
 
+import re
+import uuid
 from datetime import datetime, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from passlib.context import CryptContext
 
 from ..config.settings import Settings, get_settings
 from ..dependencies.authentications import get_current_active_user
 from ..dependencies.database import Session, get_db
-from ..dependencies.pwgen import generar_cadena_para_validar
+from ..dependencies.pwgen import CADENA_VALIDAR_REGEXP, generar_cadena_para_validar
 from ..dependencies.safe_string import safe_curp, safe_email, safe_string, safe_telefono, safe_uuid
 from ..models.cit_clientes import CitCliente
 from ..models.cit_clientes_registros import CitClienteRegistro
@@ -25,6 +28,7 @@ from ..schemas.cit_clientes_registros import (
 )
 
 EXPIRACION_HORAS = 48
+RENOVACION_DIAS = 365
 
 cit_clientes_registros = APIRouter(prefix="/api/v5/cit_clientes_registros")
 
@@ -34,7 +38,7 @@ async def solicitar(
     database: Annotated[Session, Depends(get_db)],
     solicitar_cit_cliente_registro_in: SolicitarCitClienteRegistroIn,
 ):
-    """Solicitar el registro de un cliente, se reciben los datos personales"""
+    """Solicitar el registro de un cliente, se va a enviar un mensaje a su e-mail para validar que existe"""
 
     # Validar nombres
     nombres = safe_string(solicitar_cit_cliente_registro_in.nombres, save_enie=True)
@@ -46,7 +50,7 @@ async def solicitar(
     if apellido_primero == "":
         return OneCitClienteRegistroOut(success=False, message="No es válido el primer apellido")
 
-    # Se permite omitir el apellido_segundo
+    # Se puede omitir apellido_segundo
     apellido_segundo = safe_string(solicitar_cit_cliente_registro_in.apellido_segundo, save_enie=True)
 
     # Validar CURP
@@ -106,33 +110,57 @@ async def solicitar(
     # TODO: Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
 
     # Entregar
-    return OneCitClienteRegistroOut.model_validate(cit_cliente_registro)
+    return OneCitClienteRegistroOut(
+        success=True,
+        message="Solicitud de registro de cliente creada",
+        data=CitClienteRegistroOut.model_validate(cit_cliente_registro),
+    )
 
 
-@cit_clientes_registros.post("/validar_email", response_model=OneCitClienteRegistroOut)
-async def validar_email(
-    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
+@cit_clientes_registros.post("/validar", response_model=OneCitClienteRegistroOut)
+async def validar(
     database: Annotated[Session, Depends(get_db)],
-    settings: Annotated[Settings, Depends(get_settings)],
     validar_cit_cliente_registro_in: ValidarCitClienteRegistroIn,
 ):
     """Validar el e-mail del registro de un cliente, ya que viene al dar clic en el enlace enviado por correo electrónico"""
 
-    # Validar id, debe ser un UUID
+    # Validar ID, debe ser un UUID
+    try:
+        id = uuid.UUID(validar_cit_cliente_registro_in.id)
+    except ValueError:
+        return OneCitClienteRegistroOut(success=False, message="El ID no es válido")
+    cit_cliente_registro = database.query(CitClienteRegistro).get(id)
+    if cit_cliente_registro is None:
+        return OneCitClienteRegistroOut(success=False, message="No existe ese registro")
 
     # Validar cadena_validar, debe ser una cadena de texto con minúsculas, mayúsculas y dígitos
+    cadena_validar = safe_string(validar_cit_cliente_registro_in.cadena_validar, to_uppercase=False)
+    if re.match(CADENA_VALIDAR_REGEXP, cadena_validar) is None:
+        return OneCitClienteRegistroOut(success=False, message="La cadena de validación no es válida")
 
-    # Consultar
-
-    # Si no se encuentra, causa error
+    # Consultar, si no se encuentra causa error
+    cit_cliente_registro = database.query(CitClienteRegistro).get(id)
+    if cit_cliente_registro is None:
+        return OneCitClienteRegistroOut(success=False, message="No existe la solicitud de una nueva cuenta con el ID dado")
 
     # Si ya está eliminado, causa error
+    if cit_cliente_registro.estatus != "A":
+        return OneCitClienteRegistroOut(success=False, message="Esta solicitud de nueva cuenta ha sido eliminada")
 
     # Si ya se recuperó, causa error
+    if cit_cliente_registro.ya_registrado is True:
+        return OneCitClienteRegistroOut(success=False, message="Esta solicitud de nueva cuenta ya fue hecha")
 
     # Si la cadena_validar es diferente, causa error
+    if cit_cliente_registro.cadena_validar != cadena_validar:
+        return OneCitClienteRegistroOut(success=False, message="No es igual la cadena de validación")
 
     # Entregar
+    return OneCitClienteRegistroOut(
+        success=True,
+        message="Solicitud de registro de cliente validada",
+        data=CitClienteRegistroOut.model_validate(cit_cliente_registro),
+    )
 
 
 @cit_clientes_registros.post("/terminar", response_model=OneCitClienteRegistroOut)
@@ -144,27 +172,76 @@ async def terminar(
 ):
     """Terminar el registro de un cliente, se recibe la contraseña"""
 
-    # Validar id, debe ser un UUID
+    # Validar ID, debe ser un UUID
+    try:
+        id = uuid.UUID(terminar_cit_cliente_registro_in.id)
+    except ValueError:
+        return OneCitClienteRegistroOut(success=False, message="El ID no es válido")
+    cit_cliente_registro = database.query(CitClienteRegistro).get(id)
+    if cit_cliente_registro is None:
+        return OneCitClienteRegistroOut(success=False, message="No existe ese registro")
 
     # Validar cadena_validar, debe ser una cadena de texto con minúsculas, mayúsculas y dígitos
+    cadena_validar = safe_string(terminar_cit_cliente_registro_in.cadena_validar, to_uppercase=False)
+    if re.match(CADENA_VALIDAR_REGEXP, cadena_validar) is None:
+        return OneCitClienteRegistroOut(success=False, message="La cadena de validación no es válida")
 
-    # Validar password
-
-    # Consultar
-
-    # Si no se encuentra, causa error
+    # Consultar, si no se encuentra causa error
+    cit_cliente_registro = database.query(CitClienteRegistro).get(id)
+    if cit_cliente_registro is None:
+        return OneCitClienteRegistroOut(success=False, message="No existe la solicitud de una nueva cuenta con el ID dado")
 
     # Si ya está eliminado, causa error
+    if cit_cliente_registro.estatus != "A":
+        return OneCitClienteRegistroOut(success=False, message="Esta solicitud de nueva cuenta ha sido eliminada")
 
     # Si ya se recuperó, causa error
+    if cit_cliente_registro.ya_registrado is True:
+        return OneCitClienteRegistroOut(success=False, message="Esta solicitud de nueva cuenta ya fue hecha")
 
     # Si la cadena_validar es diferente, causa error
+    if cit_cliente_registro.cadena_validar != cadena_validar:
+        return OneCitClienteRegistroOut(success=False, message="No es igual la cadena de validación")
 
     # Si no es válido el password, causa error
+    if re.match(CADENA_VALIDAR_REGEXP, terminar_cit_cliente_registro_in.password) is None:
+        return OneCitClienteRegistroOut(success=False, message="No es válido el password")
+
+    # Cifrar la contrasena
+    pwd_context = CryptContext(schemes=["pbkdf2_sha256", "des_crypt"], deprecated="auto")
+
+    # Definir el tiempo de renovacion
+    renovacion_ts = datetime.now() + timedelta(days=RENOVACION_DIAS)
+
+    # Insertar cliente
+    cit_cliente = CitCliente(
+        nombres=cit_cliente_registro.nombres,
+        apellido_primero=cit_cliente_registro.apellido_primero,
+        apellido_segundo=cit_cliente_registro.apellido_segundo,
+        curp=cit_cliente_registro.curp,
+        telefono=cit_cliente_registro.telefono,
+        email=cit_cliente_registro.email,
+        contrasena_md5="",
+        contrasena_sha256=pwd_context.hash(cit_cliente_registro.password),
+        renovacion=renovacion_ts.date(),
+    )
+    database.add(cit_cliente)
+    database.commit()
+
+    # Actualizar el registro con ya_registrado en verdadero
+    cit_cliente_registro.ya_registrado = True
+    database.add(cit_cliente_registro)
+    database.commit()
+    database.refresh(cit_cliente_registro)
 
     # TODO: Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
 
     # Entregar
+    return OneCitClienteRegistroOut(
+        success=True,
+        message="Solicitud de registro de cliente terminada",
+        data=CitClienteRegistroOut.model_validate(cit_cliente_registro),
+    )
 
 
 @cit_clientes_registros.get("/{cit_cliente_registro_id}", response_model=OneCitClienteRegistroOut)

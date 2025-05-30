@@ -10,7 +10,7 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from ..dependencies.authentications import get_current_active_user
 from ..dependencies.database import Session, get_db
 from ..dependencies.fastapi_pagination_custom_page import CustomPage
-from ..dependencies.safe_string import safe_clave, safe_uuid
+from ..dependencies.safe_string import safe_uuid
 from ..models.cit_clientes_recuperaciones import CitClienteRecuperacion
 from ..models.permisos import Permiso
 from ..schemas.cit_clientes import CitClienteInDB
