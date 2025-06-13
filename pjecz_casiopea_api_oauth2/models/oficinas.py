@@ -37,6 +37,7 @@ class Oficina(Base, UniversalMixin):
     cierre: Mapped[time]
     limite_personas: Mapped[int]
     puede_enviar_qr: Mapped[bool] = mapped_column(default=False)
+    es_activo: Mapped[bool] = mapped_column(default=True)
 
     # Hijos
     cit_citas: Mapped[List["CitCita"]] = relationship("CitCita", back_populates="oficina")

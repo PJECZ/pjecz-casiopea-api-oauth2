@@ -35,6 +35,7 @@ class CitServicio(Base, UniversalMixin):
     desde: Mapped[Optional[time]]
     hasta: Mapped[Optional[time]]
     dias_habilitados: Mapped[str] = mapped_column(String(7))
+    es_activo: Mapped[bool] = mapped_column(default=True)
 
     # Hijos
     cit_citas: Mapped[List["CitCita"]] = relationship("CitCita", back_populates="cit_servicio")
