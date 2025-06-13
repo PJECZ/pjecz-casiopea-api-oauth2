@@ -37,8 +37,10 @@ async def detalle(
         domicilio = database.query(Domicilio).filter_by(clave=clave).one()
     except (MultipleResultsFound, NoResultFound):
         return OneDomicilioOut(success=False, message="No existe ese domicilio")
+    if domicilio.es_activo is False:
+        return OneDomicilioOut(success=False, message="No está activo ese domicilio")
     if domicilio.estatus != "A":
-        return OneDomicilioOut(success=False, message="No está habilitado ese domicilio")
+        return OneDomicilioOut(success=False, message="Este domicilio está eliminado")
     return OneDomicilioOut(success=True, message=f"Detalle de {clave}", data=DomicilioOut.model_validate(domicilio))
 
 
@@ -50,4 +52,4 @@ async def paginado(
     """Paginado de domicilios"""
     if current_user.permissions.get("DOMICILIOS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    return paginate(database.query(Domicilio).filter_by(estatus="A").order_by(Domicilio.edificio))
+    return paginate(database.query(Domicilio).filter_by(es_activo=True).filter_by(estatus="A").order_by(Domicilio.edificio))

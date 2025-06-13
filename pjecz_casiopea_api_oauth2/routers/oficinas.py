@@ -38,8 +38,10 @@ async def detalle(
         oficina = database.query(Oficina).filter_by(clave=clave).one()
     except (MultipleResultsFound, NoResultFound):
         return OneOficinaOut(success=False, message="No existe esa oficina")
+    if oficina.es_activo is False:
+        return OneOficinaOut(success=False, message="No está activa ese oficina")
     if oficina.estatus != "A":
-        return OneOficinaOut(success=False, message="No está habilitada esa oficina")
+        return OneOficinaOut(success=False, message="Esta oficina está eliminada")
     return OneOficinaOut(success=True, message=f"Detalle de {clave}", data=OficinaOut.model_validate(oficina))
 
 
@@ -57,4 +59,4 @@ async def paginado(
         domicilio_clave = safe_clave(domicilio_clave)
         if domicilio_clave != "":
             consulta = consulta.join(Domicilio).filter(Domicilio.clave == domicilio_clave)
-    return paginate(consulta.filter(Oficina.estatus == "A").order_by(Oficina.clave))
+    return paginate(consulta.filter(Oficina.es_activo == True).filter(Oficina.estatus == "A").order_by(Oficina.clave))

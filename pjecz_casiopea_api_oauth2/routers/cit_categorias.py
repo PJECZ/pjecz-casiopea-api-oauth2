@@ -36,9 +36,11 @@ async def detalle(
     try:
         cit_categoria = database.query(CitCategoria).filter_by(clave=clave).one()
     except (MultipleResultsFound, NoResultFound):
-        return OneCitCategoriaOut(success=False, message="No existe esa categoria")
+        return OneCitCategoriaOut(success=False, message="No existe esa categoría")
+    if cit_categoria.es_activo is False:
+        return OneCitCategoriaOut(success=False, message="No está activa esa categoría")
     if cit_categoria.estatus != "A":
-        return OneCitCategoriaOut(success=False, message="No está habilitada esa categoria")
+        return OneCitCategoriaOut(success=False, message="Esta categoría está eliminada")
     return OneCitCategoriaOut(success=True, message=f"Categoría {clave}", data=CitCategoriaOut.model_validate(cit_categoria))
 
 
@@ -50,4 +52,4 @@ async def paginado(
     """Paginado de categorías"""
     if current_user.permissions.get("CIT CATEGORIAS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    return paginate(database.query(CitCategoria).filter_by(estatus="A").order_by(CitCategoria.nombre))
+    return paginate(database.query(CitCategoria).filter_by(es_activo=True).filter_by(estatus="A").order_by(CitCategoria.nombre))

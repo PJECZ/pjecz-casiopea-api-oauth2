@@ -155,7 +155,7 @@ async def listado(
     oficina_clave: str,
 ):
     """Horas disponibles"""
-    if current_user.permissions.get("CIT HORAS DISPONIBLES", 0) < Permiso.VER:
+    if current_user.permissions.get("CIT CITAS", 0) < Permiso.CREAR:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
 
     # Consultar la oficina

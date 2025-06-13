@@ -33,6 +33,7 @@ class Domicilio(Base, UniversalMixin):
     colonia: Mapped[str] = mapped_column(String(256))
     cp: Mapped[int]
     completo: Mapped[str] = mapped_column(String(1024))
+    es_activo: Mapped[bool] = mapped_column(default=True)
 
     # Hijos
     oficinas: Mapped[List["Oficina"]] = relationship("Oficina", back_populates="domicilio")

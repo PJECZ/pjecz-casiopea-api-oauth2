@@ -37,8 +37,10 @@ async def detalle(
         distrito = database.query(Distrito).filter_by(clave=clave).one()
     except (MultipleResultsFound, NoResultFound):
         return OneDistritoOut(success=False, message="No existe ese distrito")
+    if distrito.es_activo is False:
+        return OneDistritoOut(success=False, message="No está activo ese distrito")
     if distrito.estatus != "A":
-        return OneDistritoOut(success=False, message="No está habilitado esa distrito")
+        return OneDistritoOut(success=False, message="Este distrito está eliminado")
     return OneDistritoOut(success=True, message=f"Detalle de {clave}", data=DistritoOut.model_validate(distrito))
 
 
@@ -50,4 +52,4 @@ async def paginado(
     """Paginado de distritos"""
     if current_user.permissions.get("DISTRITOS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    return paginate(database.query(Distrito).filter_by(estatus="A").order_by(Distrito.clave))
+    return paginate(database.query(Distrito).filter_by(es_activo=True).filter_by(estatus="A").order_by(Distrito.clave))

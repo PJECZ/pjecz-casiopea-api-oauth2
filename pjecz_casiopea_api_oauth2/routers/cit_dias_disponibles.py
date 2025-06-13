@@ -72,7 +72,7 @@ async def listado(
     settings: Annotated[Settings, Depends(get_settings)],
 ):
     """Días disponibles"""
-    if current_user.permissions.get("CIT DIAS DISPONIBLES", 0) < Permiso.VER:
+    if current_user.permissions.get("CIT CITAS", 0) < Permiso.CREAR:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
 
     # Entregar
