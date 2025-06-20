@@ -19,7 +19,7 @@ def generar_cadena_para_validar(largo: int = 24) -> str:
     return "".join(temp)
 
 
-def generar_codigo_asistencia(largo: int = 4) -> str:
+def generar_codigo_asistencia(largo: int = 6) -> str:
     """Generar codigo asistencia"""
     digitos = string.digits
     temp = random.sample(digitos, largo)

@@ -5,12 +5,14 @@ Cit Citas, routers
 from datetime import datetime, timedelta
 from typing import Annotated
 
+import requests
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
 from ..config.settings import Settings, get_settings
 from ..dependencies.authentications import get_current_active_user
+from ..dependencies.control_acceso import decodificar_imagen, generar_referencia
 from ..dependencies.database import Session, get_db
 from ..dependencies.fastapi_pagination_custom_page import CustomPage
 from ..dependencies.pwgen import generar_codigo_asistencia
@@ -200,6 +202,43 @@ async def crear(
         if cancelar_antes.weekday() == 5:  # Si es sábado, se cambia a viernes
             cancelar_antes = cancelar_antes - timedelta(days=1)
 
+    # Obtener código de acceso, entrega idAcceso (int), imagen (str), success (bool) y message (str)
+    payload = {
+        "aplicacion": settings.CONTROL_ACCESO_APLICACION,
+        "referencia": generar_referencia(current_user.email, cit_servicio.clave, oficina.clave, inicio_dt),
+        "tipo": "",
+    }
+    try:
+        respuesta = requests.post(
+            url=settings.CONTROL_ACCESO_URL,
+            headers={"X-Api-Key": settings.CONTROL_ACCESO_API_KEY},
+            timeout=settings.CONTROL_ACCESO_TIMEOUT,
+            json=payload,
+        )
+    except requests.exceptions.ConnectionError as error:
+        return OneCitCitaOut(success=False, message=f"ERROR: No responde Control Acceso: {str(error)}")
+    if respuesta.status_code != 200:
+        return OneCitCitaOut(
+            success=False, message=f"ERROR: No fue código 200 la respuesta de Control Acceso: {respuesta.text}"
+        )
+    contenido = respuesta.json()
+    if contenido.get("success") is False:
+        return OneCitCitaOut(
+            success=False, message=f"ERROR: Falló la obtención del Código de Acceso: {contenido.get('message')}"
+        )
+    codigo_acceso_id = contenido.get("idAcceso")
+    if not codigo_acceso_id:
+        return OneCitCitaOut(success=False, message="ERROR: Faltó el IdAcceso en la respuesta de Control Acceso")
+    codigo_acceso_imagen = contenido.get("imagen")
+    if not codigo_acceso_imagen:
+        return OneCitCitaOut(success=False, message="ERROR: Faltó la imagen en la respuesta de Control Acceso")
+    try:
+        codigo_acceso_imagen = decodificar_imagen(codigo_acceso_imagen)
+    except ValueError as error:
+        return OneCitCitaOut(
+            success=False, message=f"ERROR: No se pudo decodificar la imagen del código de acceso {str(error)}"
+        )
+
     # Guardar
     cit_cita = CitCita(
         cit_cliente_id=current_user.id,
@@ -209,9 +248,11 @@ async def crear(
         termino=termino_dt,
         notas=safe_string(cit_cita_in.notas, max_len=1000, save_enie=True),
         estado="PENDIENTE",
+        cancelar_antes=cancelar_antes,
         asistencia=False,
         codigo_asistencia=generar_codigo_asistencia(),
-        cancelar_antes=cancelar_antes,
+        codigo_acceso_id=codigo_acceso_id,
+        codigo_acceso_imagen=codigo_acceso_imagen,
     )
     database.add(cit_cita)
     database.commit()

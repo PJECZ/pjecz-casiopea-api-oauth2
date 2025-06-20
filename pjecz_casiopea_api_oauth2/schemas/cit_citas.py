@@ -43,6 +43,7 @@ class CitCitaOut(BaseModel):
     estado: str
     asistencia: bool
     codigo_asistencia: str
+    codigo_acceso_imagen_base64: str
     creado: datetime
     puede_cancelarse: bool
     model_config = ConfigDict(from_attributes=True)
