@@ -5,32 +5,44 @@ Settings
 import os
 from functools import lru_cache
 
+import google.auth
 from google.cloud import secretmanager
 from pydantic_settings import BaseSettings
 
-PROJECT_ID = os.getenv("PROJECT_ID", "")  # Por defecto está vacío, esto significa estamos en modo local
+# PROJECT_ID = os.getenv("PROJECT_ID", "")  # Por defecto está vacío, esto significa estamos en modo local
 SERVICE_PREFIX = os.getenv("SERVICE_PREFIX", "pjecz_casiopea_api_oauth2")
 
 
-def get_secret(secret_id: str) -> str:
+def get_secret(secret_id: str, default: str = "") -> str:
     """Get secret from Google Cloud Secret Manager"""
 
-    # If not in google cloud, return environment variable
-    if PROJECT_ID == "":
-        return os.getenv(secret_id.upper(), "")
+    # Obtener el project_id con la librería de Google Auth
+    _, project_id = google.auth.default()
 
-    # Create the secret manager client
-    client = secretmanager.SecretManagerServiceClient()
+    # Si NO estamos en Google Cloud, entonces se está ejecutando de forma local
+    if not project_id:
+        # Entregar el valor de la variable de entorno, si no esta definida, se entrega el valor por defecto
+        value = os.getenv(secret_id.upper())
+        if value is None:
+            return default
+        return value
 
-    # Build the resource name of the secret version
-    secret = f"{SERVICE_PREFIX}_{secret_id}"
-    name = client.secret_version_path(PROJECT_ID, secret, "latest")
+    # Tratar de obtener el secreto
+    try:
+        # Create the secret manager client
+        client = secretmanager.SecretManagerServiceClient()
+        # Build the resource name of the secret version
+        secret = f"{SERVICE_PREFIX}_{secret_id}"
+        name = client.secret_version_path(project_id, secret, "latest")
+        # Access the secret version
+        response = client.access_secret_version(name=name)
+        # Return the decoded payload
+        return response.payload.data.decode("UTF-8")
+    except:
+        pass
 
-    # Access the secret version
-    response = client.access_secret_version(name=name)
-
-    # Return the decoded payload
-    return response.payload.data.decode("UTF-8")
+    # Entregar el valor por defecto porque no existe el secreto, ni la variable de entorno
+    return default
 
 
 class Settings(BaseSettings):
@@ -51,7 +63,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = get_secret("SECRET_KEY")
     SENDGRID_API_KEY: str = get_secret("SENDGRID_API_KEY")
     SENDGRID_FROM_EMAIL: str = get_secret("SENDGRID_FROM_EMAIL")
-    TZ: str = get_secret("tz")
+    TZ: str = get_secret("TZ")
 
     class Config:
         """Load configuration"""

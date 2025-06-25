@@ -1,0 +1,24 @@
+# Python-specific files and directories
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore logs
+*.log
+
+# Ignore environment files (sensitive information)
+.env
+
+# Ignore .git directory and .gitignore file
+.git/
+.gitignore
+
+# Ignore .idea directory
+.idea/
+
+# Ignore .poetry directory
+.poetry/
+
+# Ignore python virtual environment
+.venv/
