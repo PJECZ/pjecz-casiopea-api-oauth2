@@ -42,4 +42,4 @@ CMD exec gunicorn \
     --threads 4 \
     --timeout 0 \
     --worker-class uvicorn.workers.UvicornWorker \
-    pjecz_centauro_api_key.main:app
+    pjecz_casiopea_api_oauth2.main:app
