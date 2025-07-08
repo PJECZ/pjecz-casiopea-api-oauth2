@@ -48,12 +48,13 @@ class SolicitarCitClienteRegistroIn(BaseModel):
 class ValidarCitClienteRegistroIn(BaseModel):
     """Esquema para recibir la validación del e-mail del cliente"""
 
-    id: uuid.UUID
+    id: str  # Es string porque debe ser receptor
     cadena_validar: str
 
 
 class TerminarCitClienteRegistroIn(BaseModel):
     """Esquema para recibir la contraseña de un cliente"""
 
-    id: uuid.UUID
+    id: str  # Es string porque debe ser receptor
+    cadena_validar: str
     password: str
