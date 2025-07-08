@@ -165,9 +165,7 @@ async def validar(
 
 @cit_clientes_registros.post("/terminar", response_model=OneCitClienteRegistroOut)
 async def terminar(
-    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
-    settings: Annotated[Settings, Depends(get_settings)],
     terminar_cit_cliente_registro_in: TerminarCitClienteRegistroIn,
 ):
     """Terminar el registro de un cliente, se recibe la contraseña"""
@@ -222,7 +220,7 @@ async def terminar(
         telefono=cit_cliente_registro.telefono,
         email=cit_cliente_registro.email,
         contrasena_md5="",
-        contrasena_sha256=pwd_context.hash(cit_cliente_registro.password),
+        contrasena_sha256=pwd_context.hash(terminar_cit_cliente_registro_in.password),
         renovacion=renovacion_ts.date(),
     )
     database.add(cit_cliente)
