@@ -6,7 +6,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.ext.sqlalchemy import paginate
-from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 
 from ..dependencies.authentications import get_current_active_user
 from ..dependencies.database import Session, get_db
@@ -50,18 +50,18 @@ async def detalle(
 async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
-    distrito_clave: str = None,
-    materia_clave: str = None,
+    distrito_clave: str = "",
+    materia_clave: str = "",
 ):
     """Paginado de autoridades"""
     if current_user.permissions.get("AUTORIDADES", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     consulta = database.query(Autoridad)
-    if distrito_clave is not None:
+    if distrito_clave:
         distrito_clave = safe_clave(distrito_clave)
         if distrito_clave != "":
             consulta = consulta.join(Distrito).filter(Distrito.clave == distrito_clave)
-    if materia_clave is not None:
+    if materia_clave:
         materia_clave = safe_clave(materia_clave)
         if materia_clave != "":
             consulta = consulta.join(Materia).filter(Materia.clave == materia_clave)

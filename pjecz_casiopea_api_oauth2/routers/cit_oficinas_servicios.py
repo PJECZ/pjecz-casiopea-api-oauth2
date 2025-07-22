@@ -25,18 +25,18 @@ cit_oficinas_servicios = APIRouter(prefix="/api/v5/cit_oficinas_servicios")
 async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
-    cit_servicio_clave: str = None,
-    oficina_clave: str = None,
+    cit_servicio_clave: str = "",
+    oficina_clave: str = "",
 ):
     """Paginado de oficinas-servicios"""
     if current_user.permissions.get("CIT OFICINAS SERVICIOS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     consulta = database.query(CitOficinaServicio)
-    if cit_servicio_clave is not None:
+    if cit_servicio_clave:
         cit_servicio_clave = safe_clave(cit_servicio_clave)
         if cit_servicio_clave != "":
             consulta = consulta.join(CitServicio).filter(CitServicio.clave == cit_servicio_clave)
-    if oficina_clave is not None:
+    if oficina_clave:
         oficina_clave = safe_clave(oficina_clave)
         if oficina_clave != "":
             consulta = consulta.join(Oficina).filter(Oficina.clave == oficina_clave)

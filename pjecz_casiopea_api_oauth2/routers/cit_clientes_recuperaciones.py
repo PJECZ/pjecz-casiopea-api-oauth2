@@ -29,10 +29,10 @@ async def detalle(
     if current_user.permissions.get("CIT CLIENTES RECUPERACIONES", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
-        cit_cliente_recuperacion_id = safe_uuid(cit_cliente_recuperacion_id)
+        cit_cliente_recuperacion_uuid = safe_uuid(cit_cliente_recuperacion_id)
     except ValueError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No es válida la UUID")
-    cit_cliente_recuperacion = database.query(CitClienteRecuperacion).get(cit_cliente_recuperacion_id)
+    cit_cliente_recuperacion = database.query(CitClienteRecuperacion).get(cit_cliente_recuperacion_uuid)
     if not cit_cliente_recuperacion:
         return OneCitClienteRecuperacionOut(success=False, message="No existe esa recuperación")
     if cit_cliente_recuperacion.estatus != "A":
@@ -41,7 +41,7 @@ async def detalle(
         return OneCitClienteRecuperacionOut(success=False, message="No le pertenece esa recuperación")
     return OneCitClienteRecuperacionOut(
         success=True,
-        message=f"Recuperación {cit_cliente_recuperacion_id}",
+        message=f"Recuperación {cit_cliente_recuperacion_uuid}",
         data=CitClienteRecuperacionOut.model_validate(cit_cliente_recuperacion),
     )
 

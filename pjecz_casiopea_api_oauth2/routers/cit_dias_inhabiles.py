@@ -7,7 +7,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.ext.sqlalchemy import paginate
-from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 
 from ..dependencies.authentications import get_current_active_user
 from ..dependencies.database import Session, get_db
@@ -46,8 +46,8 @@ async def detalle(
 async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
-    desde: date = None,
-    hasta: date = None,
+    desde: date | None = None,
+    hasta: date | None = None,
 ):
     """Paginado de días inhábiles"""
     if current_user.permissions.get("CIT DIAS INHABILES", 0) < Permiso.VER:
