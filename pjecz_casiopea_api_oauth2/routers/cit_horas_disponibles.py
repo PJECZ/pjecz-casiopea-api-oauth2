@@ -6,7 +6,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 
 from ..config.settings import Settings, get_settings
 from ..dependencies.authentications import get_current_active_user

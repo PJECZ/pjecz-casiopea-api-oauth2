@@ -6,7 +6,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.ext.sqlalchemy import paginate
-from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 
 from ..dependencies.authentications import get_current_active_user
 from ..dependencies.database import Session, get_db
@@ -49,13 +49,13 @@ async def detalle(
 async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
-    cit_categoria_clave: str = None,
+    cit_categoria_clave: str = "",
 ):
     """Paginado de servicios"""
     if current_user.permissions.get("CIT SERVICIOS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     consulta = database.query(CitServicio)
-    if cit_categoria_clave is not None:
+    if cit_categoria_clave:
         cit_categoria_clave = safe_clave(cit_categoria_clave)
         if cit_categoria_clave != "":
             consulta = consulta.join(CitCategoria).filter(CitCategoria.clave == cit_categoria_clave)

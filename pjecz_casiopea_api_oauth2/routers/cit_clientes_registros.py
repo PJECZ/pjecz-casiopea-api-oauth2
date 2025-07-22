@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Annotated
 
+import rq
 from fastapi import APIRouter, Depends, HTTPException, status
 from passlib.context import CryptContext
 
@@ -14,6 +15,7 @@ from ..config.settings import Settings, get_settings
 from ..dependencies.authentications import get_current_active_user
 from ..dependencies.database import Session, get_db
 from ..dependencies.pwgen import CADENA_VALIDAR_REGEXP, generar_cadena_para_validar
+from ..dependencies.redis import get_task_queue
 from ..dependencies.safe_string import safe_curp, safe_email, safe_string, safe_telefono, safe_uuid
 from ..models.cit_clientes import CitCliente
 from ..models.cit_clientes_registros import CitClienteRegistro
@@ -36,6 +38,7 @@ cit_clientes_registros = APIRouter(prefix="/api/v5/cit_clientes_registros")
 @cit_clientes_registros.post("/solicitar", response_model=OneCitClienteRegistroOut)
 async def solicitar(
     database: Annotated[Session, Depends(get_db)],
+    task_queue: Annotated[rq.Queue, Depends(get_task_queue)],
     solicitar_cit_cliente_registro_in: SolicitarCitClienteRegistroIn,
 ):
     """Solicitar el registro de un cliente, se va a enviar un mensaje a su e-mail para validar que existe"""
@@ -107,7 +110,11 @@ async def solicitar(
     database.commit()
     database.refresh(cit_cliente_registro)
 
-    # TODO: Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
+    # Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
+    task_queue.enqueue(
+        "pjecz_casiopea_flask.blueprints.cit_clientes_registros.tasks.lanzar_enviar_a_sendgrid",
+        cit_cliente_registro_id=str(cit_cliente_registro.id),
+    )
 
     # Entregar
     return OneCitClienteRegistroOut(
@@ -166,6 +173,7 @@ async def validar(
 @cit_clientes_registros.post("/terminar", response_model=OneCitClienteRegistroOut)
 async def terminar(
     database: Annotated[Session, Depends(get_db)],
+    task_queue: Annotated[rq.Queue, Depends(get_task_queue)],
     terminar_cit_cliente_registro_in: TerminarCitClienteRegistroIn,
 ):
     """Terminar el registro de un cliente, se recibe la contraseña"""
@@ -232,7 +240,11 @@ async def terminar(
     database.commit()
     database.refresh(cit_cliente_registro)
 
-    # TODO: Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
+    # Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
+    task_queue.enqueue(
+        "pjecz_casiopea_flask.blueprints.cit_clientes_registros.tasks.enviar_mensaje_termino",
+        cit_cliente_registro.id,
+    )
 
     # Entregar
     return OneCitClienteRegistroOut(
@@ -252,16 +264,16 @@ async def detalle(
     if current_user.permissions.get("CIT CLIENTES REGISTROS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
-        cit_cliente_registro_id = safe_uuid(cit_cliente_registro_id)
+        cit_cliente_registro_uuid = safe_uuid(cit_cliente_registro_id)
     except ValueError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No es válida la UUID")
-    cit_cliente_registro = database.query(CitClienteRegistro).get(cit_cliente_registro_id)
+    cit_cliente_registro = database.query(CitClienteRegistro).get(cit_cliente_registro_uuid)
     if not cit_cliente_registro:
         return OneCitClienteRegistroOut(success=False, message="No existe ese registro")
     if cit_cliente_registro.estatus != "A":
         return OneCitClienteRegistroOut(success=False, message="No está habilitada esa registro")
     return OneCitClienteRegistroOut(
         success=True,
-        message=f"Registro {cit_cliente_registro_id}",
+        message=f"Registro {cit_cliente_registro_uuid}",
         data=CitClienteRegistroOut.model_validate(cit_cliente_registro),
     )

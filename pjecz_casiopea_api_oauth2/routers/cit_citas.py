@@ -8,7 +8,7 @@ from typing import Annotated
 import requests
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.ext.sqlalchemy import paginate
-from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 
 from ..config.settings import Settings, get_settings
 from ..dependencies.authentications import get_current_active_user
@@ -45,10 +45,10 @@ async def cancelar(
 
     # Consultar, validar que le pertenezca, que no esté eliminada o que no sea PENDIENTE
     try:
-        cit_cita_id = safe_uuid(cit_cita_id)
+        cit_cita_uuid = safe_uuid(cit_cita_id)
     except ValueError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No es válida la UUID")
-    cit_cita = database.query(CitCita).get(cit_cita_id)
+    cit_cita = database.query(CitCita).get(cit_cita_uuid)
     if not cit_cita:
         return OneCitCitaOut(success=False, message="No existe esa cita")
     if cit_cita.cit_cliente_id != current_user.id:
@@ -307,17 +307,17 @@ async def detalle(
     if current_user.permissions.get("CIT CITAS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     try:
-        cit_cita_id = safe_uuid(cit_cita_id)
+        cit_cita_uuid = safe_uuid(cit_cita_id)
     except ValueError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No es válida la UUID")
-    cit_cita = database.query(CitCita).get(cit_cita_id)
+    cit_cita = database.query(CitCita).get(cit_cita_uuid)
     if not cit_cita:
         return OneCitCitaOut(success=False, message="No existe esa cita")
     if cit_cita.estatus != "A":
         return OneCitCitaOut(success=False, message="No está habilitada esa cita")
     if cit_cita.cit_cliente_id != current_user.id:
         return OneCitCitaOut(success=False, message="No le pertenece esa cita")
-    return OneCitCitaOut(success=True, message=f"Cita {cit_cita_id}", data=CitCitaOut.model_validate(cit_cita))
+    return OneCitCitaOut(success=True, message=f"Cita {cit_cita_uuid}", data=CitCitaOut.model_validate(cit_cita))
 
 
 @cit_citas.get("", response_model=CustomPage[CitCitaOut])
