@@ -15,7 +15,9 @@ class CitCategoriaOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneCitCategoriaOut(OneBaseOut):
+class OneCitCategoriaOut(BaseModel):
     """Esquema para entregar una categoría"""
 
+    success: bool
+    message: str
     data: CitCategoriaOut | None = None

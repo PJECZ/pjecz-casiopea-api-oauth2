@@ -49,7 +49,9 @@ class CitCitaOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneCitCitaOut(OneBaseOut):
+class OneCitCitaOut(BaseModel):
     """Esquema para entregar un cita"""
 
+    success: bool
+    message: str
     data: CitCitaOut | None = None

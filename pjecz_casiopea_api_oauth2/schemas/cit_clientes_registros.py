@@ -28,9 +28,11 @@ class CitClienteRegistroOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneCitClienteRegistroOut(OneBaseOut):
+class OneCitClienteRegistroOut(BaseModel):
     """Esquema para entregar un registro de cliente"""
 
+    success: bool
+    message: str
     data: CitClienteRegistroOut | None = None
 
 

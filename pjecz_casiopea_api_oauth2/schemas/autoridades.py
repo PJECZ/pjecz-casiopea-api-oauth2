@@ -22,7 +22,9 @@ class AutoridadOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneAutoridadOut(OneBaseOut):
+class OneAutoridadOut(BaseModel):
     """Esquema para entregar un autoridad"""
 
+    success: bool
+    message: str
     data: AutoridadOut | None = None

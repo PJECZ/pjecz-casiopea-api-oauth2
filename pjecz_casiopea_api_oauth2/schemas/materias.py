@@ -15,7 +15,9 @@ class MateriaOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneMateriaOut(OneBaseOut):
+class OneMateriaOut(BaseModel):
     """Esquema para entregar una materia"""
 
+    success: bool
+    message: str
     data: MateriaOut | None = None

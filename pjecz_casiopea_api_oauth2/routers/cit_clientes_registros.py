@@ -8,19 +8,15 @@ from datetime import datetime, timedelta
 from typing import Annotated
 
 import rq
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from passlib.context import CryptContext
 
-from ..config.settings import Settings, get_settings
-from ..dependencies.authentications import get_current_active_user
 from ..dependencies.database import Session, get_db
 from ..dependencies.pwgen import CADENA_VALIDAR_REGEXP, generar_cadena_para_validar
 from ..dependencies.redis import get_task_queue
-from ..dependencies.safe_string import safe_curp, safe_email, safe_string, safe_telefono, safe_uuid
+from ..dependencies.safe_string import safe_curp, safe_email, safe_string, safe_telefono
 from ..models.cit_clientes import CitCliente
 from ..models.cit_clientes_registros import CitClienteRegistro
-from ..models.permisos import Permiso
-from ..schemas.cit_clientes import CitClienteInDB
 from ..schemas.cit_clientes_registros import (
     CitClienteRegistroOut,
     OneCitClienteRegistroOut,
@@ -71,7 +67,7 @@ async def solicitar(
     try:
         email = safe_email(solicitar_cit_cliente_registro_in.email)
     except ValueError:
-        return OneCitClienteRegistroOut(success=False, message="No es válido el email")
+        return OneCitClienteRegistroOut(success=False, message="No es válido el e-mail")
 
     # Verificar que no exista un cliente con ese CURP
     if database.query(CitCliente).filter_by(curp=curp).first() is not None:
@@ -79,7 +75,9 @@ async def solicitar(
 
     # Verificar que no exista un cliente con ese correo electrónico
     if database.query(CitCliente).filter_by(email=email).first() is not None:
-        return OneCitClienteRegistroOut(success=False, message="No puede registrarse porque ya existe una cuenta con ese email")
+        return OneCitClienteRegistroOut(
+            success=False, message="No puede registrarse porque ya existe una cuenta con ese e-mail"
+        )
 
     # Verificar que no haya un registro pendiente con ese CURP
     if (
@@ -112,7 +110,7 @@ async def solicitar(
 
     # Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
     task_queue.enqueue(
-        "pjecz_casiopea_flask.blueprints.cit_clientes_registros.tasks.lanzar_enviar_a_sendgrid",
+        "pjecz_casiopea_flask.blueprints.cit_clientes_registros.tasks.lanzar_enviar_a_sendgrid_mensaje_validar",
         cit_cliente_registro_id=str(cit_cliente_registro.id),
     )
 
@@ -145,10 +143,9 @@ async def validar(
     if re.match(CADENA_VALIDAR_REGEXP, cadena_validar) is None:
         return OneCitClienteRegistroOut(success=False, message="La cadena de validación no es válida")
 
-    # Consultar, si no se encuentra causa error
-    cit_cliente_registro = database.query(CitClienteRegistro).get(id)
-    if cit_cliente_registro is None:
-        return OneCitClienteRegistroOut(success=False, message="No existe la solicitud de una nueva cuenta con el ID dado")
+    # Si la cadena_validar es diferente, causa error
+    if cit_cliente_registro.cadena_validar != cadena_validar:
+        return OneCitClienteRegistroOut(success=False, message="No es igual la cadena de validación")
 
     # Si ya está eliminado, causa error
     if cit_cliente_registro.estatus != "A":
@@ -157,10 +154,6 @@ async def validar(
     # Si ya se recuperó, causa error
     if cit_cliente_registro.ya_registrado is True:
         return OneCitClienteRegistroOut(success=False, message="Esta solicitud de nueva cuenta ya fue hecha")
-
-    # Si la cadena_validar es diferente, causa error
-    if cit_cliente_registro.cadena_validar != cadena_validar:
-        return OneCitClienteRegistroOut(success=False, message="No es igual la cadena de validación")
 
     # Entregar
     return OneCitClienteRegistroOut(
@@ -192,11 +185,6 @@ async def terminar(
     if re.match(CADENA_VALIDAR_REGEXP, cadena_validar) is None:
         return OneCitClienteRegistroOut(success=False, message="La cadena de validación no es válida")
 
-    # Consultar, si no se encuentra causa error
-    cit_cliente_registro = database.query(CitClienteRegistro).get(id)
-    if cit_cliente_registro is None:
-        return OneCitClienteRegistroOut(success=False, message="No existe la solicitud de una nueva cuenta con el ID dado")
-
     # Si ya está eliminado, causa error
     if cit_cliente_registro.estatus != "A":
         return OneCitClienteRegistroOut(success=False, message="Esta solicitud de nueva cuenta ha sido eliminada")
@@ -211,7 +199,7 @@ async def terminar(
 
     # Si no es válido el password, causa error
     if re.match(CADENA_VALIDAR_REGEXP, terminar_cit_cliente_registro_in.password) is None:
-        return OneCitClienteRegistroOut(success=False, message="No es válido el password")
+        return OneCitClienteRegistroOut(success=False, message="No es válida la contraseña")
 
     # Cifrar la contrasena
     pwd_context = CryptContext(schemes=["pbkdf2_sha256", "des_crypt"], deprecated="auto")
@@ -242,38 +230,13 @@ async def terminar(
 
     # Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
     task_queue.enqueue(
-        "pjecz_casiopea_flask.blueprints.cit_clientes_registros.tasks.enviar_mensaje_termino",
-        cit_cliente_registro.id,
+        "pjecz_casiopea_flask.blueprints.cit_clientes_registros.tasks.lanzar_enviar_a_sendgrid_mensaje_terminar",
+        cit_cliente_registro_id=str(cit_cliente_registro.id),
     )
 
     # Entregar
     return OneCitClienteRegistroOut(
         success=True,
         message="Solicitud de registro de cliente terminada",
-        data=CitClienteRegistroOut.model_validate(cit_cliente_registro),
-    )
-
-
-@cit_clientes_registros.get("/{cit_cliente_registro_id}", response_model=OneCitClienteRegistroOut)
-async def detalle(
-    current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
-    database: Annotated[Session, Depends(get_db)],
-    cit_cliente_registro_id: str,
-):
-    """Detalle de un registro a partir de su ID"""
-    if current_user.permissions.get("CIT CLIENTES REGISTROS", 0) < Permiso.VER:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    try:
-        cit_cliente_registro_uuid = safe_uuid(cit_cliente_registro_id)
-    except ValueError:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No es válida la UUID")
-    cit_cliente_registro = database.query(CitClienteRegistro).get(cit_cliente_registro_uuid)
-    if not cit_cliente_registro:
-        return OneCitClienteRegistroOut(success=False, message="No existe ese registro")
-    if cit_cliente_registro.estatus != "A":
-        return OneCitClienteRegistroOut(success=False, message="No está habilitada esa registro")
-    return OneCitClienteRegistroOut(
-        success=True,
-        message=f"Registro {cit_cliente_registro_uuid}",
         data=CitClienteRegistroOut.model_validate(cit_cliente_registro),
     )

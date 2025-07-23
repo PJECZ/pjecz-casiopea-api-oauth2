@@ -20,7 +20,9 @@ class OficinaOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneOficinaOut(OneBaseOut):
+class OneOficinaOut(BaseModel):
     """Esquema para entregar una oficina"""
 
+    success: bool
+    message: str
     data: OficinaOut | None = None

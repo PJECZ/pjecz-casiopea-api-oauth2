@@ -34,9 +34,11 @@ class CitClienteInDB(CitClienteOut):
     disabled: bool
 
 
-class OneCitClienteOut(OneBaseOut):
+class OneCitClienteOut(BaseModel):
     """Esquema para entregar un cliente"""
 
+    success: bool
+    message: str
     data: CitClienteOut | None = None
 
 

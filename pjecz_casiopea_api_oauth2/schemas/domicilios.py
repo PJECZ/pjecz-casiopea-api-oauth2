@@ -23,7 +23,9 @@ class DomicilioOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneDomicilioOut(OneBaseOut):
+class OneDomicilioOut(BaseModel):
     """Esquema para entregar un domicilio"""
 
+    success: bool
+    message: str
     data: DomicilioOut | None = None

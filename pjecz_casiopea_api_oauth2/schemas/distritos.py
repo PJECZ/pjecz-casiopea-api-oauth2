@@ -19,7 +19,9 @@ class DistritoOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneDistritoOut(OneBaseOut):
+class OneDistritoOut(BaseModel):
     """Esquema para entregar un distrito"""
 
+    success: bool
+    message: str
     data: DistritoOut | None = None
