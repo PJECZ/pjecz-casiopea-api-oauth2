@@ -6,8 +6,6 @@ from datetime import time
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class CitServicioOut(BaseModel):
     """Esquema para entregar servicios"""

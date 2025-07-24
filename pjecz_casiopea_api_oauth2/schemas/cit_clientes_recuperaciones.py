@@ -7,17 +7,12 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class CitClienteRecuperacionOut(BaseModel):
     """Esquema para entregar recuperaciones"""
 
     id: uuid.UUID
     expiracion: datetime
-    cadena_validar: str
-    mensajes_cantidad: int
-    ya_recuperado: bool
     model_config = ConfigDict(from_attributes=True)
 
 

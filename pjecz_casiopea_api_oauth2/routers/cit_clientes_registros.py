@@ -69,29 +69,29 @@ async def solicitar(
     except ValueError:
         return OneCitClienteRegistroOut(success=False, message="No es válido el e-mail")
 
-    # Verificar que no exista un cliente con ese CURP
-    if database.query(CitCliente).filter_by(curp=curp).first() is not None:
-        return OneCitClienteRegistroOut(success=False, message="No puede registrarse porque ya existe una cuenta con ese CURP")
-
     # Verificar que no exista un cliente con ese correo electrónico
     if database.query(CitCliente).filter_by(email=email).first() is not None:
-        return OneCitClienteRegistroOut(
-            success=False, message="No puede registrarse porque ya existe una cuenta con ese e-mail"
-        )
+        return OneCitClienteRegistroOut(success=False, message="No puede registrarse porque ya hay una cuenta con ese e-mail")
+
+    # Verificar que no exista un cliente con ese CURP
+    if database.query(CitCliente).filter_by(curp=curp).first() is not None:
+        return OneCitClienteRegistroOut(success=False, message="No puede registrarse porque ya hay una cuenta con ese CURP")
 
     # Verificar que no haya un registro pendiente con ese CURP
-    if (
-        database.query(CitClienteRegistro).filter_by(curp=curp).filter_by(ya_registrado=False).filter_by(estatus="A").first()
-        is not None
-    ):
-        return OneCitClienteRegistroOut(success=False, message="Ya hay una solicitud de registro para ese CURP")
+    posible_cit_cliente_registro = database.query(CitClienteRegistro).filter_by(curp=curp).filter_by(estatus="A").first()
+    if posible_cit_cliente_registro is not None:
+        return OneCitClienteRegistroOut(
+            success=False,
+            message=f"Ya hay un registro con ese CURP, de término o espere {EXPIRACION_HORAS} horas para que expire",
+        )
 
     # Verificar que no haya un registro pendiente con ese correo electrónico
-    if (
-        database.query(CitClienteRegistro).filter_by(email=email).filter_by(ya_registrado=False).filter_by(estatus="A").first()
-        is not None
-    ):
-        return OneCitClienteRegistroOut(success=False, message="Ya hay una solicitud de registro para ese correo electrónico")
+    posible_cit_cliente_registro = database.query(CitClienteRegistro).filter_by(email=email).filter_by(estatus="A").first()
+    if posible_cit_cliente_registro is not None:
+        return OneCitClienteRegistroOut(
+            success=False,
+            message=f"Ya hay un registro con ese e-mail, de término o espere {EXPIRACION_HORAS} horas para que expire",
+        )
 
     # Insertar
     cit_cliente_registro = CitClienteRegistro(

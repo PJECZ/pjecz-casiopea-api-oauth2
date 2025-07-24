@@ -7,8 +7,6 @@ from datetime import date, datetime, time
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class CitCitaCancelIn(BaseModel):
     """Esquema para cancelar una cita"""

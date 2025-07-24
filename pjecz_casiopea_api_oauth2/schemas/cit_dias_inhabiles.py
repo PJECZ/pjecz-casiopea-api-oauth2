@@ -6,8 +6,6 @@ from datetime import date
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class CitDiaInhabilOut(BaseModel):
     """Esquema para entregar dias inhábiles"""

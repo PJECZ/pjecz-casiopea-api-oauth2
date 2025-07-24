@@ -4,8 +4,6 @@ Materias, esquemas de pydantic
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class MateriaOut(BaseModel):
     """Esquema para entregar materias"""

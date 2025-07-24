@@ -45,10 +45,20 @@ async def solicitar(
     except ValueError:
         return OneCitClienteRecuperacionOut(success=False, message="No es válido el e-mail")
 
-    # Verificar que exista el cliente con ese correo electrónico
+    # Validar que exista el cliente con ese correo electrónico
     cit_cliente = database.query(CitCliente).filter_by(email=email).first()
     if cit_cliente is None:
         return OneCitClienteRecuperacionOut(success=False, message="No existe esa cuenta con ese e-mail")
+
+    # Validar que NO exista una recuperación pendiente
+    posible_cit_cliente_recuperacion = (
+        database.query(CitClienteRecuperacion).filter_by(cit_cliente_id=cit_cliente.id).filter_by(estatus="A").first()
+    )
+    if posible_cit_cliente_recuperacion is not None:
+        return OneCitClienteRecuperacionOut(
+            success=False,
+            message=f"Ya hay una recuperación de esa cuenta, de término o espere {EXPIRACION_HORAS} horas para que expire",
+        )
 
     # Insertar
     cit_cliente_recuperacion = CitClienteRecuperacion(
@@ -106,7 +116,7 @@ async def validar(
         return OneCitClienteRecuperacionOut(success=False, message="Esta recuperación ha sido eliminada")
 
     # Si ya se recuperó, causa error
-    if cit_cliente_recuperacion.ya_registrado is True:
+    if cit_cliente_recuperacion.ya_recuperado is True:
         return OneCitClienteRecuperacionOut(success=False, message="Esta recuperación ya fue hecha")
 
     # Entregar
@@ -144,7 +154,7 @@ async def terminar(
         return OneCitClienteRecuperacionOut(success=False, message="Esta recuperación ha sido eliminada")
 
     # Si ya se recuperó, causa error
-    if cit_cliente_recuperacion.ya_registrado is True:
+    if cit_cliente_recuperacion.ya_recuperado is True:
         return OneCitClienteRecuperacionOut(success=False, message="Esta recuperación ya fue hecha")
 
     # Si la cadena_validar es diferente, causa error
@@ -163,6 +173,7 @@ async def terminar(
 
     # Actualizar el cliente
     cit_cliente = cit_cliente_recuperacion.cit_cliente
+    cit_cliente.contrasena_md5 = ""
     cit_cliente.contrasena_sha256 = pwd_context.hash(terminar_cit_cliente_recuperacion_in.password)
     cit_cliente.renovacion = renovacion_ts.date()
     database.add(cit_cliente)

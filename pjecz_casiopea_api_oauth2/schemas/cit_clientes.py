@@ -6,8 +6,6 @@ import uuid
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class CitClienteOut(BaseModel):
     """Esquema para entregar clientes"""

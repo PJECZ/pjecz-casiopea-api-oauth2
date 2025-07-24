@@ -4,8 +4,6 @@ Cit Categorías, esquemas de pydantic
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class CitCategoriaOut(BaseModel):
     """Esquema para entregar categorías"""

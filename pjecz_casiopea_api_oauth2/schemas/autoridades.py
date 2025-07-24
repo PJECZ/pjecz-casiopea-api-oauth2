@@ -4,8 +4,6 @@ Autoridades, esquemas de pydantic
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class AutoridadOut(BaseModel):
     """Esquema para entregar autoridades"""
