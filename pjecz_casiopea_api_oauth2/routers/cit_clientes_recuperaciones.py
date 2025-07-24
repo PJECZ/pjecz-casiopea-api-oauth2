@@ -75,7 +75,7 @@ async def solicitar(
     # Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
     task_queue.enqueue(
         "pjecz_casiopea_flask.blueprints.cit_clientes_recuperaciones.tasks.lanzar_enviar_a_sendgrid_mensaje_validar",
-        cit_cliente_registro_id=str(cit_cliente_recuperacion.id),
+        cit_cliente_recuperacion_id=str(cit_cliente_recuperacion.id),
     )
 
     # Entregar
@@ -142,7 +142,7 @@ async def terminar(
         return OneCitClienteRecuperacionOut(success=False, message="El ID no es válido")
     cit_cliente_recuperacion = database.query(CitClienteRecuperacion).get(id)
     if cit_cliente_recuperacion is None:
-        return OneCitClienteRecuperacionOut(success=False, message="No existe ese registro")
+        return OneCitClienteRecuperacionOut(success=False, message="No existe esa recuperación")
 
     # Validar cadena_validar, debe ser una cadena de texto con minúsculas, mayúsculas y dígitos
     cadena_validar = safe_string(terminar_cit_cliente_recuperacion_in.cadena_validar, to_uppercase=False)
