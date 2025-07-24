@@ -4,8 +4,6 @@ Oficinas, esquemas de pydantic
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class OficinaOut(BaseModel):
     """Esquema para entregar oficinas"""
@@ -20,7 +18,9 @@ class OficinaOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneOficinaOut(OneBaseOut):
+class OneOficinaOut(BaseModel):
     """Esquema para entregar una oficina"""
 
+    success: bool
+    message: str
     data: OficinaOut | None = None

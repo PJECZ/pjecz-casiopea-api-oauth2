@@ -4,8 +4,6 @@ Domicilios, esquemas de pydantic
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class DomicilioOut(BaseModel):
     """Esquema para entregar domicilios"""
@@ -23,7 +21,9 @@ class DomicilioOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneDomicilioOut(OneBaseOut):
+class OneDomicilioOut(BaseModel):
     """Esquema para entregar un domicilio"""
 
+    success: bool
+    message: str
     data: DomicilioOut | None = None

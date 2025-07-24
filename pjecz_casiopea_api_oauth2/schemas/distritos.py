@@ -4,8 +4,6 @@ Distritos, esquemas de pydantic
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class DistritoOut(BaseModel):
     """Esquema para entregar distritos"""
@@ -19,7 +17,9 @@ class DistritoOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneDistritoOut(OneBaseOut):
+class OneDistritoOut(BaseModel):
     """Esquema para entregar un distrito"""
 
+    success: bool
+    message: str
     data: DistritoOut | None = None

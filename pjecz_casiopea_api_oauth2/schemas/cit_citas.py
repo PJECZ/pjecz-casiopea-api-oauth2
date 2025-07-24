@@ -7,8 +7,6 @@ from datetime import date, datetime, time
 
 from pydantic import BaseModel, ConfigDict
 
-from ..dependencies.schemas_base import OneBaseOut
-
 
 class CitCitaCancelIn(BaseModel):
     """Esquema para cancelar una cita"""
@@ -49,7 +47,9 @@ class CitCitaOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class OneCitCitaOut(OneBaseOut):
+class OneCitCitaOut(BaseModel):
     """Esquema para entregar un cita"""
 
+    success: bool
+    message: str
     data: CitCitaOut | None = None
