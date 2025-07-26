@@ -29,7 +29,8 @@ RUN poetry install --no-dev
 COPY . ./
 
 # PORT is automatically provided by Cloud Run, typically 8080
-# EXPOSE 8080
+ENV PORT=8000
+EXPOSE $PORT
 
 # Run the web service on container startup
 # Set desired Gunicorn worker count (adjust based on Cloud Run CPU/Memory and expected load)
@@ -39,7 +40,7 @@ COPY . ./
 CMD exec gunicorn \
     --bind :$PORT \
     --workers 1 \
-    --threads 4 \
+    --threads 2 \
     --timeout 0 \
     --worker-class uvicorn.workers.UvicornWorker \
     pjecz_casiopea_api_oauth2.main:app
