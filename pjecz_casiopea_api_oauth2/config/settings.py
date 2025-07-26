@@ -57,23 +57,23 @@ class Settings(BaseSettings):
     """Settings"""
 
     ACCESS_TOKEN_EXPIRE_SECONDS: int = int(get_secret("ACCESS_TOKEN_EXPIRE_SECONDS", "3600"))
-    ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
-    CONTROL_ACCESO_URL: str = os.getenv("CONTROL_ACCESO_URL", "")
-    CONTROL_ACCESO_API_KEY: str = os.getenv("CONTROL_ACCESO_API_KEY", "")
-    CONTROL_ACCESO_APLICACION: int = int(os.getenv("CONTROL_ACCESO_APLICACION", ""))
-    CONTROL_ACCESO_TIMEOUT: int = int(os.getenv("CONTROL_ACCESO_TIMEOUT", "60"))
+    ALGORITHM: str = get_secret("ALGORITHM", "HS256")
+    CONTROL_ACCESO_URL: str = get_secret("CONTROL_ACCESO_URL")
+    CONTROL_ACCESO_API_KEY: str = get_secret("CONTROL_ACCESO_API_KEY")
+    CONTROL_ACCESO_APLICACION: int = int(get_secret("CONTROL_ACCESO_APLICACION", "0"))
+    CONTROL_ACCESO_TIMEOUT: int = int(get_secret("CONTROL_ACCESO_TIMEOUT", "60"))
     DB_HOST: str = get_secret("DB_HOST")
     DB_PORT: int = int(get_secret("DB_PORT", "5432"))
     DB_NAME: str = get_secret("DB_NAME")
     DB_PASS: str = get_secret("DB_PASS")
     DB_USER: str = get_secret("DB_USER")
     ORIGINS: str = get_secret("ORIGINS")
-    REDIS_URL: str = get_secret("REDIS_URL", "redis://localhost:6379/0")
-    TASK_QUEUE: str = get_secret("TASK_QUEUE", "pjecz_casiopea")
+    REDIS_URL: str = get_secret("REDIS_URL")
+    TASK_QUEUE: str = get_secret("TASK_QUEUE")
     SECRET_KEY: str = get_secret("SECRET_KEY")
     SENDGRID_API_KEY: str = get_secret("SENDGRID_API_KEY")
     SENDGRID_FROM_EMAIL: str = get_secret("SENDGRID_FROM_EMAIL")
-    TZ: str = get_secret("TZ")
+    TZ: str = get_secret("TZ", "America/Mexico_City")
 
     class Config:
         """Load configuration"""

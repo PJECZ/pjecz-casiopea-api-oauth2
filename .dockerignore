@@ -7,6 +7,12 @@ __pycache__/
 # Ignore logs
 *.log
 
+# Ignore CSV files
+*.csv
+
+# Ignore SQL files
+*.sql
+
 # Ignore environment files (sensitive information)
 .env
 
