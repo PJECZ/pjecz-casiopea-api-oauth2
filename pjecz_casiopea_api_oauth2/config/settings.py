@@ -67,12 +67,15 @@ class Settings(BaseSettings):
     DB_NAME: str = get_secret("DB_NAME")
     DB_PASS: str = get_secret("DB_PASS")
     DB_USER: str = get_secret("DB_USER")
+    HOST: str = get_secret("HOST", "http://localhost:3000")
+    NEW_ACCOUNT_WEB_PAGE_URL: str = get_secret("NEW_ACCOUNT_WEB_PAGE_URL", "http://localhost:3000/registros/confirmar")
     ORIGINS: str = get_secret("ORIGINS")
+    RECOVER_WEB_PAGE_URL: str = get_secret("RECOVER_WEB_PAGE_URL", "http://localhost:3000/recuperaciones/confirmar")
     REDIS_URL: str = get_secret("REDIS_URL")
-    TASK_QUEUE: str = get_secret("TASK_QUEUE")
     SECRET_KEY: str = get_secret("SECRET_KEY")
     SENDGRID_API_KEY: str = get_secret("SENDGRID_API_KEY")
     SENDGRID_FROM_EMAIL: str = get_secret("SENDGRID_FROM_EMAIL")
+    TASK_QUEUE: str = get_secret("TASK_QUEUE")
     TZ: str = get_secret("TZ", "America/Mexico_City")
 
     class Config:
