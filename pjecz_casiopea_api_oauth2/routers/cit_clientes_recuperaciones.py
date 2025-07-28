@@ -7,13 +7,15 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Annotated
 
-import rq
+import pytz
+import sendgrid
 from fastapi import APIRouter, Depends
 from passlib.context import CryptContext
+from sendgrid.helpers.mail import Content, Email, Mail, To
 
+from ..config.settings import Settings, get_settings
 from ..dependencies.database import Session, get_db
 from ..dependencies.pwgen import CADENA_VALIDAR_REGEXP, generar_cadena_para_validar
-from ..dependencies.redis import get_task_queue
 from ..dependencies.safe_string import safe_email, safe_string
 from ..models.cit_clientes import CitCliente
 from ..models.cit_clientes_recuperaciones import CitClienteRecuperacion
@@ -34,7 +36,7 @@ cit_clientes_recuperaciones = APIRouter(prefix="/api/v5/cit_clientes_recuperacio
 @cit_clientes_recuperaciones.post("/solicitar", response_model=OneCitClienteRecuperacionOut)
 async def solicitar(
     database: Annotated[Session, Depends(get_db)],
-    task_queue: Annotated[rq.Queue, Depends(get_task_queue)],
+    settings: Annotated[Settings, Depends(get_settings)],
     solicitar_cit_cliente_recuperacion_in: SolicitarCitClienteRecuperacionIn,
 ):
     """Solicitar una recuperación de contraseña"""
@@ -72,11 +74,46 @@ async def solicitar(
     database.commit()
     database.refresh(cit_cliente_recuperacion)
 
-    # Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
-    task_queue.enqueue(
-        "pjecz_casiopea_flask.blueprints.cit_clientes_recuperaciones.tasks.lanzar_enviar_a_sendgrid_mensaje_validar",
-        cit_cliente_recuperacion_id=str(cit_cliente_recuperacion.id),
+    # Elaborar el asunto del mensaje
+    asunto_str = "Cambiar su contraseña en el Sistema de Citas PJECZ"
+
+    # Elaborar el URL de verificación
+    verificacion_url = settings.RECOVER_WEB_PAGE_URL
+    verificacion_url = f"{verificacion_url}?id={str(cit_cliente_recuperacion.id)}"
+    verificacion_url = f"{verificacion_url}&cadena_validar={cit_cliente_recuperacion.cadena_validar}"
+
+    # Elaborar el contenido del mensaje
+    fecha_envio = datetime.now(tz=pytz.timezone(settings.TZ)).strftime("%d/%b/%Y %H:%M")
+    contenidos = []
+    contenidos.append(f"<h2>{asunto_str}</h2>")
+    contenidos.append(f"<p>Enviado el {fecha_envio}</p>")
+    contenidos.append("<p><strong>Antes de 48 horas vaya a este URL para cambiar su contraseña:</strong></p>")
+    contenidos.append("<ul>")
+    contenidos.append(f"<li>{verificacion_url}</li>")
+    contenidos.append("</ul>")
+    contenidos.append("<p>Este mensaje fue enviado por un programa. <em>NO RESPONDA ESTE MENSAJE.</em></p>")
+    contenido_html = "\n".join(contenidos)
+
+    # Enviar el e-mail
+    send_grid = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
+    to_email = To(cit_cliente_recuperacion.email)
+    remitente_email = Email(settings.SENDGRID_FROM_EMAIL)
+    contenido = Content("text/html", contenido_html)
+    mail = Mail(
+        from_email=remitente_email,
+        to_emails=to_email,
+        subject=asunto_str,
+        html_content=contenido,
     )
+
+    # Enviar mensaje de correo electrónico
+    try:
+        send_grid.send(mail)
+    except Exception as error:
+        return OneCitClienteRecuperacionOut(
+            success=False,
+            message=f"Error al enviar el mensaje por Sendgrid: {str(error)}",
+        )
 
     # Entregar
     return OneCitClienteRecuperacionOut(
@@ -130,7 +167,7 @@ async def validar(
 @cit_clientes_recuperaciones.post("/terminar", response_model=OneCitClienteRecuperacionOut)
 async def terminar(
     database: Annotated[Session, Depends(get_db)],
-    task_queue: Annotated[rq.Queue, Depends(get_task_queue)],
+    settings: Annotated[Settings, Depends(get_settings)],
     terminar_cit_cliente_recuperacion_in: TerminarCitClienteRecuperacionIn,
 ):
     """Terminar la recuperación, se recibe la contraseña"""
@@ -185,11 +222,41 @@ async def terminar(
     database.commit()
     database.refresh(cit_cliente_recuperacion)
 
-    # Agregar tarea en el fondo para que se envie un mensaje via correo electrónico
-    task_queue.enqueue(
-        "pjecz_casiopea_flask.blueprints.cit_clientes_recuperaciones.tasks.lanzar_enviar_a_sendgrid_mensaje_terminar",
-        cit_cliente_recuperacion_id=str(cit_cliente_recuperacion.id),
+    # Elaborar el asunto del mensaje
+    asunto_str = "Se ha completado el cambio de contraseña al Sistema de Citas PJECZ"
+
+    # Elaborar el contenido del mensaje
+    fecha_envio = datetime.now(tz=pytz.timezone(settings.TZ)).strftime("%d/%b/%Y %H:%M")
+    contenidos = []
+    contenidos.append(f"<h2>{asunto_str}</h2>")
+    contenidos.append(f"<p>Enviado el {fecha_envio}</p>")
+    contenidos.append("<p><strong>Ha cambiado su contraseña y ya puede ingresar al Sistema de Citas PJECZ</strong></p>")
+    contenidos.append("<ul>")
+    contenidos.append(f'<li><a href="{settings.HOST}">{settings.HOST}</a></li>')
+    contenidos.append("</ul>")
+    contenidos.append("<p>Este mensaje fue enviado por un programa. <em>NO RESPONDA ESTE MENSAJE.</em></p>")
+    contenido_html = "\n".join(contenidos)
+
+    # Enviar el e-mail
+    send_grid = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
+    to_email = To(cit_cliente_recuperacion.email)
+    remitente_email = Email(settings.SENDGRID_FROM_EMAIL)
+    contenido = Content("text/html", contenido_html)
+    mail = Mail(
+        from_email=remitente_email,
+        to_emails=to_email,
+        subject=asunto_str,
+        html_content=contenido,
     )
+
+    # Enviar mensaje de correo electrónico
+    try:
+        send_grid.send(mail)
+    except Exception as error:
+        return OneCitClienteRecuperacionOut(
+            success=False,
+            message=f"Error al enviar el mensaje por Sendgrid: {str(error)}",
+        )
 
     # Entregar
     return OneCitClienteRecuperacionOut(
