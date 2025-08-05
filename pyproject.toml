@@ -5,6 +5,7 @@ description = "API con autentificación OAuth2 para el sistema de citas."
 authors = ["Guillermo Valdes <guillermo@movimientolibre.com>"]
 license = "AGPL3"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"

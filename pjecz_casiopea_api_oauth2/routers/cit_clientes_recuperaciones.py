@@ -96,7 +96,7 @@ async def solicitar(
 
     # Enviar el e-mail
     send_grid = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
-    to_email = To(cit_cliente_recuperacion.email)
+    to_email = To(cit_cliente_recuperacion.cit_cliente.email)
     remitente_email = Email(settings.SENDGRID_FROM_EMAIL)
     contenido = Content("text/html", contenido_html)
     mail = Mail(
@@ -239,7 +239,7 @@ async def terminar(
 
     # Enviar el e-mail
     send_grid = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
-    to_email = To(cit_cliente_recuperacion.email)
+    to_email = To(cit_cliente_recuperacion.cit_cliente.email)
     remitente_email = Email(settings.SENDGRID_FROM_EMAIL)
     contenido = Content("text/html", contenido_html)
     mail = Mail(
