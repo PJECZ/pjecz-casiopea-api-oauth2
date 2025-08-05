@@ -4,19 +4,20 @@
 .DS_Store
 .~lock.*
 
-*.code-workspace
 *.csv
 *.log
 *.py[cod]
+*.sqlite3
+*.sqlite3-journal
+*.session.sql
 *.sql
-*.sqlite
-*.pdf
+*.xls
 *.xlsx
 
 __pycache__/
 *.egg-info/
 
-/poetry.lock
-/.idea/
 /.venv/
 /venv/
+
+poetry.lock

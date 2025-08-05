@@ -18,19 +18,19 @@ WORKDIR /usr/src/app
 # Upgrade pip and setuptools
 RUN pip install --upgrade pip setuptools
 
-# Install package poetry
+# Install poetry
 RUN pip install poetry==1.8.5
 
 # Poetry install
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml ./
 RUN poetry install --no-dev
 
 # Copy the rest of the application code into the container
 COPY . ./
 
 # PORT is automatically provided by Cloud Run, typically 8080
-ENV PORT=8000
-EXPOSE $PORT
+# ENV PORT=8000
+# EXPOSE $PORT
 
 # Run the web service on container startup
 # Set desired Gunicorn worker count (adjust based on Cloud Run CPU/Memory and expected load)
