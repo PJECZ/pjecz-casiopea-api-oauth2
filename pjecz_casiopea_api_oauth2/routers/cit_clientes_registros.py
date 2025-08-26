@@ -28,6 +28,7 @@ from ..schemas.cit_clientes_registros import (
 )
 
 EXPIRACION_HORAS = 48
+LIMITE_CITAS_PENDIENTES = 3
 RENOVACION_DIAS = 365
 
 cit_clientes_registros = APIRouter(prefix="/api/v5/cit_clientes_registros")
@@ -255,6 +256,7 @@ async def terminar(
         contrasena_md5="",
         contrasena_sha256=pwd_context.hash(terminar_cit_cliente_registro_in.password),
         renovacion=renovacion_ts.date(),
+        limite_citas_pendientes=LIMITE_CITAS_PENDIENTES,
     )
     database.add(cit_cliente)
     database.commit()
