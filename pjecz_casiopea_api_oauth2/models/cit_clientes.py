@@ -33,7 +33,7 @@ class CitCliente(Base, UniversalMixin):
     contrasena_md5: Mapped[str] = mapped_column(String(256))
     contrasena_sha256: Mapped[str] = mapped_column(String(256))
     renovacion: Mapped[date]
-    limite_citas_pendientes: Mapped[int] = mapped_column(default=0)
+    limite_citas_pendientes: Mapped[int] = mapped_column(default=3)
 
     # Columnas booleanas
     autoriza_mensajes: Mapped[bool] = mapped_column(default=True)
