@@ -40,4 +40,8 @@ async def paginado(
         oficina_clave = safe_clave(oficina_clave)
         if oficina_clave != "":
             consulta = consulta.join(Oficina).filter(Oficina.clave == oficina_clave)
-    return paginate(consulta.filter(CitOficinaServicio.estatus == "A").order_by(CitOficinaServicio.creado.desc()))
+    return paginate(
+        consulta.filter(CitOficinaServicio.es_activo == True)
+        .filter(CitOficinaServicio.estatus == "A")
+        .order_by(CitOficinaServicio.creado.desc())
+    )
