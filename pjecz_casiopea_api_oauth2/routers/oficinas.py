@@ -12,6 +12,7 @@ from ..dependencies.authentications import get_current_active_user
 from ..dependencies.database import Session, get_db
 from ..dependencies.fastapi_pagination_custom_page import CustomPage
 from ..dependencies.safe_string import safe_clave
+from ..models.distritos import Distrito
 from ..models.domicilios import Domicilio
 from ..models.oficinas import Oficina
 from ..models.permisos import Permiso
@@ -49,12 +50,17 @@ async def detalle(
 async def paginado(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
+    distrito_clave: str = "",
     domicilio_clave: str = "",
 ):
     """Paginado de oficinas"""
     if current_user.permissions.get("OFICINAS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     consulta = database.query(Oficina)
+    if distrito_clave:
+        distrito_clave = safe_clave(distrito_clave)
+        if distrito_clave != "":
+            consulta = consulta.join(Distrito).filter(Distrito.clave == distrito_clave)
     if domicilio_clave:
         domicilio_clave = safe_clave(domicilio_clave)
         if domicilio_clave != "":
