@@ -16,8 +16,8 @@ class CitServicioOut(BaseModel):
     descripcion: str
     duracion: time
     documentos_limite: int
-    desde: time
-    hasta: time
+    desde: time | None = None
+    hasta: time | None = None
     dias_habilitados: str
     model_config = ConfigDict(from_attributes=True)
 
