@@ -65,6 +65,7 @@ class CitCliente(Base, UniversalMixin):
             "AUTORIDADES": 1,
             "CIT CATEGORIAS": 1,
             "CIT CITAS": 3,
+            "CIT CLIENTES": 1,
             "CIT RECUPERACIONES": 3,
             "CIT REGISTROS": 3,
             "CIT DIAS DISPONIBLES": 1,
@@ -76,6 +77,11 @@ class CitCliente(Base, UniversalMixin):
             "MATERIAS": 1,
             "OFICINAS": 1,
         }
+
+    @property
+    def nombre(self):
+        """Junta nombres, apellido_primero y apellido segundo"""
+        return self.nombres + " " + self.apellido_primero + " " + self.apellido_segundo
 
     def __repr__(self):
         """Representación"""
