@@ -61,4 +61,4 @@ class Autoridad(Base, UniversalMixin):
 
     def __repr__(self):
         """Representación"""
-        return f"<Autoridad {self.id}>"
+        return f"<Autoridad {self.clave}>"

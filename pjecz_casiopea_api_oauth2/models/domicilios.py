@@ -40,4 +40,4 @@ class Domicilio(Base, UniversalMixin):
 
     def __repr__(self):
         """Representación"""
-        return f"<Domicilio {self.edificio}>"
+        return f"<Domicilio {self.clave}>"

@@ -31,4 +31,4 @@ class CitCategoria(Base, UniversalMixin):
 
     def __repr__(self):
         """Representación"""
-        return f"<CitCategoria {self.nombre}>"
+        return f"<CitCategoria {self.clave}>"

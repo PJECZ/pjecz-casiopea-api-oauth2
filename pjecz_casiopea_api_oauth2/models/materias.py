@@ -31,4 +31,4 @@ class Materia(Base, UniversalMixin):
 
     def __repr__(self):
         """Representación"""
-        return f"<Materia {self.nombre}>"
+        return f"<Materia {self.clave}>"
