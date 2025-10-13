@@ -16,7 +16,6 @@
 *.xlsx
 
 __pycache__/
-
 /.idea
 /.git
 /.github
@@ -26,3 +25,5 @@ __pycache__/
 /rest-client
 /tests
 /venv
+
+/gclouddeploy.sh
