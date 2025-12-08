@@ -3,7 +3,7 @@ FastAPI Pagination Custom Page
 """
 
 from abc import ABC
-from typing import Any, Generic, Optional, Sequence, TypeVar
+from typing import Any, Optional, Sequence, TypeVar
 
 from fastapi import Query
 from fastapi_pagination.bases import AbstractPage, AbstractParams
@@ -24,18 +24,18 @@ class CustomPageParams(LimitOffsetParams):
 T = TypeVar("T")
 
 
-class CustomPage(AbstractPage[T], Generic[T], ABC):
+class CustomPage(AbstractPage[T], ABC):
     """
     Custom Page
     """
 
     success: bool
     message: str
-    data: Sequence[T]
+    data: Sequence[T] | None = None
 
-    total: Optional[GreaterEqualZero]
-    limit: Optional[GreaterEqualOne]
-    offset: Optional[GreaterEqualZero]
+    total: Optional[GreaterEqualZero] | None = None
+    limit: Optional[GreaterEqualOne] | None = None
+    offset: Optional[GreaterEqualZero] | None = None
 
     __params_type__ = CustomPageParams
 
@@ -64,7 +64,7 @@ class CustomPage(AbstractPage[T], Generic[T], ABC):
 
         return cls(
             success=True,
-            message="Success",
+            message="Consulta exitosa",
             data=items,
             total=total,
             limit=raw_params.limit,
