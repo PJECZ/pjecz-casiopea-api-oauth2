@@ -30,7 +30,6 @@ class Settings(BaseSettings):
     NEW_ACCOUNT_WEB_PAGE_URL: str = os.getenv("NEW_ACCOUNT_WEB_PAGE_URL", "http://localhost:3000/registros/confirmar")
     ORIGINS: str = os.getenv("ORIGINS", "http://127.0.0.1:3000,http://localhost:3000")
     RECOVER_WEB_PAGE_URL: str = os.getenv("RECOVER_WEB_PAGE_URL", "http://localhost:3000/recuperaciones/confirmar")
-    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
     SECRET_KEY: str = os.getenv("SECRET_KEY", "")
     SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY", "")
     SENDGRID_FROM_EMAIL: str = os.getenv("SENDGRID_FROM_EMAIL", "")
