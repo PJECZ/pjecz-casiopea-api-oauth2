@@ -206,7 +206,11 @@ async def crear(
     payload = {
         "aplicacion": settings.CONTROL_ACCESO_APLICACION,
         "referencia": generar_referencia(current_user.email, cit_servicio.clave, oficina.clave, inicio_dt),
-        "tipo": "",
+        "nombre": current_user.nombre,
+        "apellidos": f"{current_user.apellido_paterno} {current_user.apellido_materno}",
+        "correoElectronico": current_user.email,
+        "telefono": f"+52{current_user.telefono}",
+        "fecha": inicio_dt.isoformat(timespec="minutes"),
     }
     try:
         respuesta = requests.post(
