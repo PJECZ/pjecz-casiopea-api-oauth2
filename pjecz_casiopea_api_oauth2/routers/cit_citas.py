@@ -206,7 +206,7 @@ async def crear(
     payload = {
         "aplicacion": settings.CONTROL_ACCESO_APLICACION,
         "referencia": generar_referencia(current_user.email, cit_servicio.clave, oficina.clave, inicio_dt),
-        "nombre": current_user.nombre,
+        "nombres": current_user.nombres,
         "apellidos": f"{current_user.apellido_paterno} {current_user.apellido_materno}",
         "correoElectronico": current_user.email,
         "telefono": f"+52{current_user.telefono}",
