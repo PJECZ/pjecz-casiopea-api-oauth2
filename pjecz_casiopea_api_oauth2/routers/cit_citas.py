@@ -206,7 +206,11 @@ async def crear(
     payload = {
         "aplicacion": settings.CONTROL_ACCESO_APLICACION,
         "referencia": generar_referencia(current_user.email, cit_servicio.clave, oficina.clave, inicio_dt),
-        "tipo": "",
+        "nombres": current_user.nombres,
+        "apellidos": f"{current_user.apellido_primero} {current_user.apellido_segundo}",
+        "correoElectronico": current_user.email,
+        "telefono": f"+52{current_user.telefono}",
+        "fecha": inicio_dt.isoformat(timespec="minutes"),
     }
     try:
         respuesta = requests.post(
@@ -228,16 +232,10 @@ async def crear(
         )
     codigo_acceso_id = contenido.get("idAcceso")
     if not codigo_acceso_id:
-        return OneCitCitaOut(success=False, message="ERROR: Faltó el IdAcceso en la respuesta de Control Acceso")
-    codigo_acceso_imagen = contenido.get("imagen")
-    if not codigo_acceso_imagen:
+        return OneCitCitaOut(success=False, message="ERROR: Faltó la idAcceso en la respuesta de Control Acceso")
+    codigo_acceso_url = contenido.get("imagen")
+    if not codigo_acceso_url:
         return OneCitCitaOut(success=False, message="ERROR: Faltó la imagen en la respuesta de Control Acceso")
-    try:
-        codigo_acceso_imagen = decodificar_imagen(codigo_acceso_imagen)
-    except ValueError as error:
-        return OneCitCitaOut(
-            success=False, message=f"ERROR: No se pudo decodificar la imagen del código de acceso {str(error)}"
-        )
 
     # Guardar
     cit_cita = CitCita(
@@ -252,7 +250,7 @@ async def crear(
         asistencia=False,
         codigo_asistencia=generar_codigo_asistencia(),
         codigo_acceso_id=codigo_acceso_id,
-        codigo_acceso_imagen=codigo_acceso_imagen,
+        codigo_acceso_url=codigo_acceso_url,
     )
     database.add(cit_cita)
     database.commit()
