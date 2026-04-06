@@ -17,6 +17,7 @@
 .bashrc
 .env
 poetry.lock
+uv.lock
 
 __pycache__/
 *.egg-info/
