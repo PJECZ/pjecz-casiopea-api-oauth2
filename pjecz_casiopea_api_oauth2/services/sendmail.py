@@ -17,7 +17,6 @@ class PlantillaEmailBase(ABC):
     """Clase base abstracta para las plantillas de correo."""
 
     _enviroment: Environment
-    _fecha_envio_str: str
 
     @property
     @abstractmethod
@@ -30,12 +29,18 @@ class PlantillaEmailBase(ABC):
     def subject(self) -> str:
         """Asunto del correo electrónico."""
         pass
+    
+    @property
+    @abstractmethod
+    def _variables_contenido(self) -> dict[str, str]:
+        """Variables para la plantilla."""
+        pass
 
     def __init__(self):
         """Constructor de la clase."""
 
         # Por defecto se establece al fecha de envío en el momento de creación de la plantilla
-        self._fecha_envio_str = datetime.now().strftime("%d/%b/%Y %H:%M")
+        self._variables_contenido["fecha_envio_str"] = datetime.now().strftime("%d/%b/%Y %H:%M")
 
         # Configurar el entorno de Jinja2 para cargar plantillas desde el directorio 'templates/email'
         # La ruta se construye de forma relativa a la ubicación de este archivo.
@@ -45,23 +50,25 @@ class PlantillaEmailBase(ABC):
     def set_fecha_envio(self, fecha_envio:datetime) -> None:
         """Establece la fecha y hora de envío"""
         
-        self._fecha_envio_str = fecha_envio.strftime("%d/%b/%Y %H:%M")
+        self._variables_contenido["fecha_envio_str"] = fecha_envio.strftime("%d/%b/%Y %H:%M")
 
     @abstractmethod
     def get_contenido(self) -> dict:
         """Diccionario con las variables para renderizar la plantilla."""
         pass
 
-    @abstractmethod
     def get_contenido(self) -> Content:
-        """Regresa el contenido de la plantilla con las variables cargadas."""
-        pass
+        """Carga las variables en la plantilla y la regresa como contenido HTML"""
+
+        # Cargar la plantilla específica
+        template = self._enviroment.get_template(self.template_name)
+        # Renderizar la plantilla con las variables proporcionadas
+        return Content("text/html", template.render(**self._variables_contenido))
 
 
 class PlantillaClienteRecuperacionContrasena(PlantillaEmailBase):
     """
     Define los datos necesarios para la plantilla de recuperación de contraseña para un cliente.
-    Valida en el constructor que todos los datos requeridos son proporcionados.
     """
     template_name = "cliente_recuperacion_contrasena.jinja2"
     subject = "Cambiar su contraseña en el Sistema de Citas PJECZ"
@@ -71,21 +78,44 @@ class PlantillaClienteRecuperacionContrasena(PlantillaEmailBase):
         'verificacion_url': '',
     }
 
-    def __init__(self, verificacion_url: str):
+    def __init__(self, asunto: str, verificacion_url: str):
         super().__init__()
+
+        self._variables_contenido['asunto'] = asunto
         self._variables_contenido['verificacion_url'] = verificacion_url
-    
-    def get_contenido(self) -> Content:
-        """Carga las variables en la plantilla y la regresa como contenido HTML"""
 
-        # Cargar la plantilla específica
-        template = self._enviroment.get_template(self.template_name)
 
-        # Variable de asunto
-        self._variables_contenido['asunto'] = self.subject
+class PlantillaCitaCreada(PlantillaEmailBase):
+    """
+    Plantilla para la creación de una cita.
+    """
+    template_name = "cita_creada.jinja2"
+    subject = "Cita Agendada en el Sistema de Citas PJECZ"
+    _variables_contenido: dict[str, str] = {
+        'fecha_envio': '',
+        'id': '',
+        'nombre_cliente': '',
+        'oficina': '',
+        'servicio': '',
+        'fecha_cita': '',
+        'hora_cita': '',
+        'notas': '',
+        'codigo_qr': '',
+        'codigo_asistencia': 0,
+    }
 
-        # Renderizar la plantilla con las variables proporcionadas
-        return Content("text/html", template.render(**self._variables_contenido))
+    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_cita: str, hora_cita: str, notas: str, codigo_qr: str, codigo_asistencia: int):
+        super().__init__()
+
+        self._variables_contenido['id'] = id
+        self._variables_contenido['nombre_cliente'] = nombre_cliente
+        self._variables_contenido['oficina'] = oficina
+        self._variables_contenido['servicio'] = servicio
+        self._variables_contenido['fecha_cita'] = fecha_cita
+        self._variables_contenido['hora_cita'] = hora_cita
+        self._variables_contenido['notas'] = notas
+        self._variables_contenido['codigo_qr'] = codigo_qr
+        self._variables_contenido['codigo_asistencia'] = codigo_asistencia
 
 
 class Email():

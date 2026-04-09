@@ -1,7 +1,222 @@
-<h2>{asunto}</h2>
-<p>Enviado el {fecha_envio}</p>
-<p><strong>Antes de 48 horas vaya a este URL para cambiar su contraseña:</strong></p>
-<ul>
-    <li>{verificacion_url}</li>
-</ul>
-<p>Este mensaje fue enviado por un programa. <em>NO RESPONDA ESTE MENSAJE.</em></p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cita Agendada - PJECZ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f7f4; font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f4f7f4;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(112, 129, 83, 0.12);">
+
+          <!-- Header with Logo Centered -->
+          <tr>
+            <td style="background-color: #50643e; text-align: center;">
+              <div style="padding: 16px; display: inline-block;">
+                <img src="https://citas.pjecz.gob.mx/images/logo_transparente.png" alt="Sistema de Citas" style="height: 50px; width: auto; filter: invert(100%) brightness(200%) opacity(60%);" />
+              </div>
+            </td>
+          </tr>
+
+          <!-- Title Section -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #708153 0%, #65815c 100%); padding: 30px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td>
+                    <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Cita Agendada</h1>
+                  </td>
+                  <td style="text-align: right;">
+                    <div style="background-color: rgba(255,255,255,0.15); border-radius: 12px; padding: 12px 16px; display: inline-block;">
+                      <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">ID</p>
+                      <p style="margin: 4px 0 0 0; color: #ffffff; font-size: 20px; font-weight: 600;">{{id}}</p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Date Badge -->
+          <tr>
+            <td style="padding: 0 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: -20px;">
+                <tr>
+                  <td>
+                    <div style="background-color: #ffffff; border-radius: 12px; padding: 16px 20px; box-shadow: 0 4px 16px rgba(112, 129, 83, 0.15); display: inline-block;">
+                      <p style="margin: 0; color: #65815c; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Fecha de elaboración</p>
+                      <p style="margin: 4px 0 0 0; color: #2d3a1f; font-size: 14px; font-weight: 600;">{{fecha_envio}}</p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="padding: 32px 40px 24px 40px;">
+              <h2 style="margin: 0; color: #2d3a1f; font-size: 22px; font-weight: 600;">Hola, {{nombre_cliente}}</h2>
+              <p style="margin: 12px 0 0 0; color: #5a6a4a; font-size: 15px; line-height: 1.6;">Te mostramos la información detallada de tu cita:</p>
+            </td>
+          </tr>
+
+          <!-- Appointment Details Card with QR -->
+          <tr>
+            <td style="padding: 0 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8faf6; border-radius: 12px; border: 1px solid #e8ede4;">
+                <tr>
+                  <td style="padding: 24px;" valign="top">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td valign="top" style="width: 65%;">
+                          <!-- Oficina -->
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                            <tr>
+                              <td width="40" valign="top">
+                                <div style="width: 36px; height: 36px; background-color: #708153; border-radius: 10px; text-align: center; line-height: 36px;">
+                                  <span style="color: #ffffff; font-size: 16px;">🏛</span>
+                                </div>
+                              </td>
+                              <td style="padding-left: 12px;">
+                                <p style="margin: 0; color: #7a8a6a; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Oficina</p>
+                                <p style="margin: 4px 0 0 0; color: #2d3a1f; font-size: 15px; font-weight: 600;">{{oficina}}</p>
+                              </td>
+                            </tr>
+                          </table>
+
+                          <!-- Servicio -->
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                            <tr>
+                              <td width="40" valign="top">
+                                <div style="width: 36px; height: 36px; background-color: #65815c; border-radius: 10px; text-align: center; line-height: 36px;">
+                                  <span style="color: #ffffff; font-size: 16px;">📋</span>
+                                </div>
+                              </td>
+                              <td style="padding-left: 12px;">
+                                <p style="margin: 0; color: #7a8a6a; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Servicio</p>
+                                <p style="margin: 4px 0 0 0; color: #2d3a1f; font-size: 15px; font-weight: 600;">{{servicio}}</p>
+                              </td>
+                            </tr>
+                          </table>
+
+                          <!-- Fecha -->
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                            <tr>
+                              <td width="40" valign="top">
+                                <div style="width: 36px; height: 36px; background-color: #708153; border-radius: 10px; text-align: center; line-height: 36px;">
+                                  <span style="color: #ffffff; font-size: 16px;">📅</span>
+                                </div>
+                              </td>
+                              <td style="padding-left: 12px;">
+                                <p style="margin: 0; color: #7a8a6a; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Fecha</p>
+                                <p style="margin: 4px 0 0 0; color: #2d3a1f; font-size: 15px; font-weight: 600;">{{fecha_cita}}</p>
+                              </td>
+                            </tr>
+                          </table>
+
+                          <!-- Hora -->
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px;">
+                            <tr>
+                              <td width="40" valign="top">
+                                <div style="width: 36px; height: 36px; background-color: #65815c; border-radius: 10px; text-align: center; line-height: 36px;">
+                                  <span style="color: #ffffff; font-size: 16px;">⏰</span>
+                                </div>
+                              </td>
+                              <td style="padding-left: 12px;">
+                                <p style="margin: 0; color: #7a8a6a; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Hora</p>
+                                <p style="margin: 4px 0 0 0; color: #2d3a1f; font-size: 15px; font-weight: 600;">{{hora_cita}}</p>
+                              </td>
+                            </tr>
+                          </table>
+
+                          <!-- Notas -->
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td width="40" valign="top">
+                                <div style="width: 36px; height: 36px; background-color: #65815c; border-radius: 10px; text-align: center; line-height: 36px;">
+                                  <span style="color: #ffffff; font-size: 16px;">📝</span>
+                                </div>
+                              </td>
+                              <td style="padding-left: 12px;">
+                                <p style="margin: 0; color: #7a8a6a; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Notas</p>
+                                <p style="margin: 4px 0 0 0; color: #2d3a1f; font-size: 15px; font-weight: 600;">{{notas}}</p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <!-- QR Code Column - Black and White -->
+            <td valign="middle" style="text-align: center; padding: 20px;">
+              <div style="background-color: #ffffff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); display: inline-block; border: 1px solid #e8ede4;">
+                <img src="{{codigo_qr}}" alt="QR Code" style="width: 120px; height: 120px; border-radius: 8px;" />
+                <p style="margin: 12px 0 0 0; color: #2d3a1f; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Código QR</p>
+                <p style="margin: 4px 0 0 0; color: #7a8a6a; font-size: 10px;">Escanea para verificar</p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Important Notice -->
+          <tr>
+            <td style="padding: 24px 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fff8e6; border-radius: 12px; border-left: 4px solid #708153;">
+                <tr>
+                  <td style="padding: 16px 20px;">
+                    <p style="margin: 0; color: #5a5030; font-size: 14px; font-weight: 600;">⚡ Por favor se puntual</p>
+                    <p style="margin: 8px 0 0 0; color: #7a7050; font-size: 13px; line-height: 1.5;">Puedes cancelar tu cita 24 horas antes de la fecha agendada.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Verification Code -->
+          <tr>
+            <td style="padding: 8px 40px 32px 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background: linear-gradient(135deg, #708153 0%, #65815c 100%); border-radius: 16px;">
+                <tr>
+                  <td style="padding: 28px; text-align: center;">
+                    <p style="margin: 0; color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px;">Código de verificación de asistencia</p>
+                    <p style="margin: 16px 0; color: #ffffff; font-size: 52px; font-weight: 700; letter-spacing: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;">{{codigo_asistencia}}</p>
+                    <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 400;">Solicita que marquen tu asistencia</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer with Logo and Contact Info -->
+          <tr>
+            <td style="background-color: #708153; text-align: center; padding: 12px;">
+              <img src="https://www.pjecz.gob.mx/theme/images/poder-judicial-410x180.png" alt="PJECZ Logo" style="height: 100px; width: auto; filter: invert(100%) brightness(200%) opacity(60%);" />
+            </td>
+          </tr>
+          <tr style="background-color: #50643e; padding: 40px;">
+            <td style="text-align: center; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 12px; padding-bottom: 12px;">
+              <p style="margin: 0 0 8px 0; color: rgba(255,255,255,0.95); font-size: 13px; line-height: 1.6;">
+                Blvd. Fundadores No. 7435, en la Colonia Ex Hacienda San José de los Cerritos.<br />
+                Saltillo, Coahuila de Zaragoza, México.
+              </p>
+              <p style="margin: 0 0 8px 0; color: rgba(255,255,255,0.95); font-size: 13px;">
+                <a href="mailto:poderjudicialcoahuila@pjecz.gob.mx" style="color: #ffffff; font-weight: 500;">poderjudicialcoahuila@pjecz.gob.mx</a>
+              </p>
+              <p style="margin: 0 0 16px 0; color: rgba(255,255,255,0.95); font-size: 13px;">
+                ☎️ Teléfono: <strong style="color: #ffffff;">844 777 4498</strong>
+              </p>
+              <p style="margin: 0; color: rgba(255,255,255,0.6); font-size: 11px;">
+                © 2026 Todos los derechos reservados. <a href="https://www.pjecz.gob.mx/politicas-de-uso/terminos-de-uso-del-sitio-web/" style="color: #ffffff;">Términos y condiciones</a>.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
