@@ -87,6 +87,7 @@ class PlantillaClienteValidarCuenta(PlantillaEmailBase):
         self._variables_contenido['cliente_id'] = cliente_id
         self._variables_contenido['url_sistema_citas'] = url_sistema_citas
 
+
 class PlantillaClienteCambiarContrasena(PlantillaEmailBase):
     """
     Define los datos necesarios para la plantilla de cambio de contraseña de un cliente.
@@ -108,10 +109,13 @@ class PlantillaClienteCambiarContrasena(PlantillaEmailBase):
         self._variables_contenido['cliente_email'] = cliente_email
         self._variables_contenido['url_cambio_contrasena'] = url_cambio_contrasena
 
+
 class PlantillaClienteCompletado(PlantillaEmailBase):
     """
-    Define los datos necesarios para la plantilla de cambio de contraseña para un cliente.
+    Representa la plantilla de correo electrónico para notificar a un cliente
+    que su proceso o registro ha sido completado con éxito.
     """
+
     template_name = "cliente_completado.jinja2"
     subject = "Se ha completado el registro en el Sistema de Citas PJECZ"
     _variables_contenido: dict[str, str] = {
@@ -122,6 +126,30 @@ class PlantillaClienteCompletado(PlantillaEmailBase):
     }
 
     def __init__(self, nombre_cliente: str, cliente_id: str, cliente_email: str, url_sistema_citas: str):
+        """
+        Representa la plantilla de correo electrónico para notificar a un cliente
+        que su proceso o registro ha sido completado con éxito.
+
+        Esta clase hereda de `PlantillaEmailBase` y extiende su funcionalidad para
+        personalizar el contenido del mensaje con los datos específicos del cliente
+        y el acceso al sistema de citas.
+
+        ## Atributos:
+            nombre_cliente (str): Nombre completo del cliente para el saludo.
+            cliente_id (str): Identificador único del cliente en la base de datos.
+            cliente_email (str): Dirección de correo electrónico del destinatario.
+            url_sistema_citas (str): Enlace directo para que el cliente gestione sus citas.
+
+        ## Ejemplo:
+        ```python
+        plantilla = PlantillaClienteCompletado(
+            nombre_cliente="Juan Pérez",
+            cliente_id="CLI-123",
+            cliente_email="juan.perez@email.com",
+            url_sistema_citas="https://citas.empresa.com"
+        )
+        ```
+        """
         super().__init__()
 
         self._variables_contenido['asunombre_clienteto'] = nombre_cliente
@@ -185,6 +213,7 @@ class PlantillaCitaCancelada(PlantillaEmailBase):
         self._variables_contenido['notas'] = notas
         self._variables_contenido['fecha_hora_cancelacion'] = fecha_hora_cancelacion
 
+
 class Email():
     """Email"""
 
@@ -193,8 +222,8 @@ class Email():
     plantilla: PlantillaEmailBase
     to_email: To
 
-    def __init__(self, to_email: str, plantilla: PlantillaEmailBase):
-        """Constructor de la clase"""
+    def __init__(self, to_email: str, plantilla: PlantillaEmailBase = None):
+        """Inicializa el servicio de email, especifica el destinatario y si quieres una plantilla"""
 
         self._settings = get_settings()
         self._remitente_email = EmailSendGrid(self._settings.SENDGRID_FROM_EMAIL)
@@ -202,6 +231,9 @@ class Email():
         self.plantilla = plantilla
         self.to_email = To(to_email)
 
+    def set_plantilla(self, plantilla: PlantillaEmailBase) -> None:
+        """Establece una nueva plantilla a utilizar"""
+        self.plantilla = plantilla
 
     def enviar_email(self):
         """ Envío de email por SendGrid """
