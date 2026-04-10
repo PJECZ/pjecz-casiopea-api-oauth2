@@ -11,12 +11,14 @@ from jinja2 import Environment, FileSystemLoader
 import sendgrid
 from sendgrid.helpers.mail import Content, Email as EmailSendGrid, Mail, To
 from ..config.settings import Settings, get_settings
+from ..dependencies.exceptions import MyRequestError
 
 
 class PlantillaEmailBase(ABC):
     """Clase base abstracta para las plantillas de correo."""
 
     _enviroment: Environment
+    _fecha_hora_envio_str: str
 
     @property
     @abstractmethod
@@ -40,7 +42,7 @@ class PlantillaEmailBase(ABC):
         """Constructor de la clase."""
 
         # Por defecto se establece al fecha de envío en el momento de creación de la plantilla
-        self._variables_contenido["fecha_envio_str"] = datetime.now().strftime("%d/%b/%Y %H:%M")
+        self.set_fecha_envio(datetime.now())
 
         # Configurar el entorno de Jinja2 para cargar plantillas desde el directorio 'templates/email'
         # La ruta se construye de forma relativa a la ubicación de este archivo.
@@ -50,7 +52,7 @@ class PlantillaEmailBase(ABC):
     def set_fecha_envio(self, fecha_envio:datetime) -> None:
         """Establece la fecha y hora de envío"""
         
-        self._variables_contenido["fecha_envio_str"] = fecha_envio.strftime("%d/%b/%Y %H:%M")
+        self._fecha_hora_envio_str = fecha_envio.strftime("%d-%b-%Y %H:%M %p")
 
     @abstractmethod
     def get_contenido(self) -> dict:
@@ -63,26 +65,69 @@ class PlantillaEmailBase(ABC):
         # Cargar la plantilla específica
         template = self._enviroment.get_template(self.template_name)
         # Renderizar la plantilla con las variables proporcionadas
-        return Content("text/html", template.render(**self._variables_contenido))
+        return Content("text/html", template.render(**self._variables_contenido, fecha_hora_envio=self._fecha_hora_envio_str))
 
 
-class PlantillaClienteRecuperacionContrasena(PlantillaEmailBase):
+class PlantillaClienteValidarCuenta(PlantillaEmailBase):
     """
-    Define los datos necesarios para la plantilla de recuperación de contraseña para un cliente.
+    Define los datos necesarios para la plantilla de validación de una cuenta de un cliente.
     """
-    template_name = "cliente_recuperacion_contrasena.jinja2"
-    subject = "Cambiar su contraseña en el Sistema de Citas PJECZ"
+    template_name = "cliente_validar_cuenta.jinja2"
+    subject = "Valida tu email para utilizar el Sistema de Citas PJECZ"
     _variables_contenido: dict[str, str] = {
-        'asunto': '',
-        'fecha_envio': '',
-        'verificacion_url': '',
+        'nombre_cliente': '',
+        'cliente_id': '',
+        'url_sistema_citas': '',
     }
 
-    def __init__(self, asunto: str, verificacion_url: str):
+    def __init__(self, nombre_cliente: str, cliente_id: str, url_sistema_citas: str):
         super().__init__()
 
-        self._variables_contenido['asunto'] = asunto
-        self._variables_contenido['verificacion_url'] = verificacion_url
+        self._variables_contenido['nombre_cliente'] = nombre_cliente
+        self._variables_contenido['cliente_id'] = cliente_id
+        self._variables_contenido['url_sistema_citas'] = url_sistema_citas
+
+class PlantillaClienteCambiarContrasena(PlantillaEmailBase):
+    """
+    Define los datos necesarios para la plantilla de cambio de contraseña de un cliente.
+    """
+    template_name = "cliente_cambiar_contrasena.jinja2"
+    subject = "Cambiar su contraseña del Sistema de Citas PJECZ"
+    _variables_contenido: dict[str, str] = {
+        'nombre_cliente': '',
+        'cliente_id': '',
+        'cliente_email': '',
+        'url_cambio_contrasena': '',
+    }
+
+    def __init__(self, nombre_cliente: str, cliente_id: str, cliente_email: str, url_cambio_contrasena: str):
+        super().__init__()
+
+        self._variables_contenido['nombre_cliente'] = nombre_cliente
+        self._variables_contenido['cliente_id'] = cliente_id
+        self._variables_contenido['cliente_email'] = cliente_email
+        self._variables_contenido['url_cambio_contrasena'] = url_cambio_contrasena
+
+class PlantillaClienteCompletado(PlantillaEmailBase):
+    """
+    Define los datos necesarios para la plantilla de cambio de contraseña para un cliente.
+    """
+    template_name = "cliente_completado.jinja2"
+    subject = "Se ha completado el registro en el Sistema de Citas PJECZ"
+    _variables_contenido: dict[str, str] = {
+        'nombre_cliente': '',
+        'cliente_id': '',
+        'cliente_email': '',
+        'url_sistema_citas': '',
+    }
+
+    def __init__(self, nombre_cliente: str, cliente_id: str, cliente_email: str, url_sistema_citas: str):
+        super().__init__()
+
+        self._variables_contenido['asunombre_clienteto'] = nombre_cliente
+        self._variables_contenido['cliente_id'] = cliente_id
+        self._variables_contenido['cliente_email'] = cliente_email
+        self._variables_contenido['url_sistema_citas'] = url_sistema_citas
 
 
 class PlantillaCitaCreada(PlantillaEmailBase):
@@ -92,31 +137,53 @@ class PlantillaCitaCreada(PlantillaEmailBase):
     template_name = "cita_creada.jinja2"
     subject = "Cita Agendada en el Sistema de Citas PJECZ"
     _variables_contenido: dict[str, str] = {
-        'fecha_envio': '',
-        'id': '',
         'nombre_cliente': '',
+        'id': '',
         'oficina': '',
         'servicio': '',
-        'fecha_cita': '',
-        'hora_cita': '',
+        'fecha_hora_cita': '',
         'notas': '',
-        'codigo_qr': '',
-        'codigo_asistencia': 0,
+        'codigo_qr_url': '',
     }
 
-    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_cita: str, hora_cita: str, notas: str, codigo_qr: str, codigo_asistencia: int):
+    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_hora_cita: str, notas: str, codigo_qr_url: str):
         super().__init__()
 
         self._variables_contenido['id'] = id
         self._variables_contenido['nombre_cliente'] = nombre_cliente
         self._variables_contenido['oficina'] = oficina
         self._variables_contenido['servicio'] = servicio
-        self._variables_contenido['fecha_cita'] = fecha_cita
-        self._variables_contenido['hora_cita'] = hora_cita
+        self._variables_contenido['fecha_hora_cita'] = fecha_hora_cita
         self._variables_contenido['notas'] = notas
-        self._variables_contenido['codigo_qr'] = codigo_qr
-        self._variables_contenido['codigo_asistencia'] = codigo_asistencia
+        self._variables_contenido['codigo_qr_url'] = codigo_qr_url
 
+
+class PlantillaCitaCancelada(PlantillaEmailBase):
+    """
+    Plantilla para la cancelación de una cita.
+    """
+    template_name = "cita_cancelada.jinja2"
+    subject = "Cita Cancelada en el Sistema de Citas PJECZ"
+    _variables_contenido: dict[str, str] = {
+        'nombre_cliente': '',
+        'id': '',
+        'oficina': '',
+        'servicio': '',
+        'fecha_hora_cita': '',
+        'notas': '',
+        'fecha_hora_cancelacion': '',
+    }
+
+    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_hora_cita: str, notas: str, fecha_hora_cancelacion: str):
+        super().__init__()
+
+        self._variables_contenido['id'] = id
+        self._variables_contenido['nombre_cliente'] = nombre_cliente
+        self._variables_contenido['oficina'] = oficina
+        self._variables_contenido['servicio'] = servicio
+        self._variables_contenido['fecha_hora_cita'] = fecha_hora_cita
+        self._variables_contenido['notas'] = notas
+        self._variables_contenido['fecha_hora_cancelacion'] = fecha_hora_cancelacion
 
 class Email():
     """Email"""
@@ -153,4 +220,7 @@ class Email():
         )
 
         # Enviar mensaje de correo electrónico
-        send_grid.send(mail)
+        try:
+            send_grid.send(mail)
+        except Exception as error:
+            raise MyRequestError(f"Error al enviar el mensaje por Sendgrid: {str(error)}") from error

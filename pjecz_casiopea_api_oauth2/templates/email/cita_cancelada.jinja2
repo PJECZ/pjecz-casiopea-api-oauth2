@@ -1,4 +1,4 @@
-<div style="display:none;max-height:0px;overflow:hidden">Tiene una cita el día {{fecha_hora_cita}}</div>
+<div style="display:none;max-height:0px;overflow:hidden">Cancelaste con éxito tu cita</div>
 <div style="display:none;max-height:0px;overflow:hidden"><ul></ul></div>
 <div>
 <center style="width: 100%; background-color: #e7e7e7;">
@@ -14,9 +14,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding: 20px; background: #198754;">
+                            <td style="padding: 20px; background-color: #b02a37;">
                                 <h3 style="text-align: left; font-family: helvetica, arial; font-weight: 400; font-size: 30px; line-height: 36px; color: rgb(255, 255, 255); padding: 0px; margin: 0px;">
-                                    Cita agendada con éxito en el sistema de citas del PJECZ
+                                    Cita cancelada con éxito en el sistema de citas del PJECZ
                                 </h3>
                             </td>
                         </tr>
@@ -66,7 +66,7 @@
                             <tr>
                                 <td style="padding: 5px 0px; border-bottom: 1px solid lightgrey; font-family: helvetica, arial; ">
                                     <h4 style="text-align: left; font-size: 16px; line-height: 20px; font-weight: 400; color: rgb(51, 51, 51); padding: 5px 5px 10px; margin: 0px;">
-                                        📅 Fecha y Hora:</h4>
+                                        📅 Fecha y hora de la cita agendada:</h4>
                                     <h4 style="text-align: left; font-family: helvetica, arial; font-size: 26px; line-height: 30px; font-weight: 400; color: rgb(51, 51, 51); padding: 0px 5px 5px; margin: 0px; ">
                                         {{fecha_hora_cita}}</h4>
                                 </td>
@@ -86,24 +86,24 @@
             </tr>
             <tr>
                 <td style="background: rgb(255, 255, 255); padding: 0px 20px 20px; text-align: center; font-family: helvetica, arial; font-size: 18px; color: rgb(51, 51, 51);">
-                    <h4 style="padding: 0; margin: 0;">Código QR de entrada</h4>
-                    <img src="{{codigo_qr_url}}">
-                    <p style="color:gray; font-style: italic; font-size: medium;">Escanea en la entrada para poder acceder al área de atención</p>
+                    <h4 style="padding: 0; margin: 0;">Confirmamos que tu cita se canceló correctamente</h4>
+                    <h4 style="font-size: 16px; line-height: 20px; font-weight: 400; color: rgb(51, 51, 51); padding: 5px; margin: 0px;">
+                    🚫 Fecha y hora de cancelación</h4>
+                    <h4 style="font-family: helvetica, arial; font-size: 20px; line-height: 30px; font-weight: 400; color: rgb(51, 51, 51); padding: 0px 5px 5px; margin: 0px; ">
+                    {{fecha_hora_cancelacion}}</h4>
                 </td>
             </tr>
             <tr>
                 <td style="background: rgb(255, 255, 255); padding: 0px 20px 40px;">
-                    <div style="padding: 10px 15px 5px; border-radius: 15px; background: #fff8e6; border-left: 5px solid #b97600;">
+                    <div style="padding: 10px 15px 5px; border-radius: 15px; background-color: #cfe2ff; border-left: 5px solid #0d6efd;">
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-spacing:0!important;border-collapse:collapse!important;table-layout:fixed!important;margin:0 auto!important">
                             <tbody>
                             <tr>
-                                <td style="padding: 5px 0px; color: #746844;">
+                                <td style="padding: 5px 0px; color: #0d6efd;">
                                     <h4 style="text-align: left; font-family: helvetica, arial; font-size: 20px; font-weight: bold; padding: 5px 5px 10px; margin: 0px; ">
-                                        ⏰ Por favor se puntual</h4>
-                                    <h4 style="text-align: left; color: #887e5e; font-family: helvetica, arial; font-size: 16px; font-weight: 100; padding: 5px; margin: 0px; ">
-                                        Hay que estar 15 minutos antes de la hora agendada.</h4>
-                                    <h4 style="text-align: left; color: #887e5e; font-family: helvetica, arial; font-size: 16px; font-weight: 100; padding: 5px; margin: 0px; ">
-                                        Puedes cancelar tu cita 24 horas antes de la fecha agendada.</h4>
+                                        👋 Gracias por hacer buen uso del sistema de citas</h4>
+                                    <h4 style="text-align: left; color: #6ea8fe; font-family: helvetica, arial; font-size: 16px; font-weight: 100; padding: 5px; margin: 0px; ">
+                                        Ya no debes asistir a tu cita. Haz dejado lugar para otra persona.</h4>
                                 </td>
                             </tr>
                             </tbody>
