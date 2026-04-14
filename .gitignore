@@ -15,6 +15,7 @@
 *.XLSX
 
 .bashrc
+.zshrc
 .env
 poetry.lock
 uv.lock
