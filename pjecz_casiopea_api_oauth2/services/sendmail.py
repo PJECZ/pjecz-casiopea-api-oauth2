@@ -4,6 +4,7 @@ Servicio para enviar correos electrónicos
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
+import locale
 import pytz
 
 from jinja2 import Environment, FileSystemLoader
@@ -16,6 +17,8 @@ from ..dependencies.exceptions import MyRequestError
 
 class PlantillaEmailBase(ABC):
     """Clase base abstracta para las plantillas de correo."""
+
+    FORMATO_FECHA_Y_HORA = "%d de %B del %Y a las %I:%M %p"
 
     _enviroment: Environment
     _fecha_hora_envio_str: str
@@ -41,6 +44,12 @@ class PlantillaEmailBase(ABC):
     def __init__(self):
         """Constructor de la clase."""
 
+        # Configurar el locale a español
+        try:
+            locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+        except locale.Error:
+            locale.setlocale(locale.LC_TIME, 'es_ES')
+
         # Por defecto se establece al fecha de envío en el momento de creación de la plantilla
         self.set_fecha_envio(datetime.now())
 
@@ -52,7 +61,7 @@ class PlantillaEmailBase(ABC):
     def set_fecha_envio(self, fecha_envio:datetime) -> None:
         """Establece la fecha y hora de envío"""
         
-        self._fecha_hora_envio_str = fecha_envio.strftime("%d-%b-%Y %H:%M %p")
+        self._fecha_hora_envio_str = fecha_envio.strftime(self.FORMATO_FECHA_Y_HORA)
 
     @abstractmethod
     def get_contenido(self) -> dict:
@@ -152,7 +161,7 @@ class PlantillaClienteCompletado(PlantillaEmailBase):
         """
         super().__init__()
 
-        self._variables_contenido['asunombre_clienteto'] = nombre_cliente
+        self._variables_contenido['nombre_cliente'] = nombre_cliente
         self._variables_contenido['cliente_id'] = cliente_id
         self._variables_contenido['cliente_email'] = cliente_email
         self._variables_contenido['url_sistema_citas'] = url_sistema_citas
@@ -174,14 +183,14 @@ class PlantillaCitaCreada(PlantillaEmailBase):
         'codigo_qr_url': '',
     }
 
-    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_hora_cita: str, notas: str, codigo_qr_url: str):
+    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_hora_cita: datetime, notas: str, codigo_qr_url: str):
         super().__init__()
 
         self._variables_contenido['id'] = id
         self._variables_contenido['nombre_cliente'] = nombre_cliente
         self._variables_contenido['oficina'] = oficina
         self._variables_contenido['servicio'] = servicio
-        self._variables_contenido['fecha_hora_cita'] = fecha_hora_cita
+        self._variables_contenido['fecha_hora_cita'] = fecha_hora_cita.strftime(self.FORMATO_FECHA_Y_HORA)
         self._variables_contenido['notas'] = notas
         self._variables_contenido['codigo_qr_url'] = codigo_qr_url
 
@@ -202,16 +211,16 @@ class PlantillaCitaCancelada(PlantillaEmailBase):
         'fecha_hora_cancelacion': '',
     }
 
-    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_hora_cita: str, notas: str, fecha_hora_cancelacion: str):
+    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_hora_cita: datetime, notas: str, fecha_hora_cancelacion: datetime):
         super().__init__()
 
         self._variables_contenido['id'] = id
         self._variables_contenido['nombre_cliente'] = nombre_cliente
         self._variables_contenido['oficina'] = oficina
         self._variables_contenido['servicio'] = servicio
-        self._variables_contenido['fecha_hora_cita'] = fecha_hora_cita
+        self._variables_contenido['fecha_hora_cita'] = fecha_hora_cita.strftime(self.FORMATO_FECHA_Y_HORA)
         self._variables_contenido['notas'] = notas
-        self._variables_contenido['fecha_hora_cancelacion'] = fecha_hora_cancelacion
+        self._variables_contenido['fecha_hora_cancelacion'] = fecha_hora_cancelacion.strftime(self.FORMATO_FECHA_Y_HORA)
 
 
 class Email():
@@ -230,6 +239,12 @@ class Email():
 
         self.plantilla = plantilla
         self.to_email = To(to_email)
+
+        # Configurar el locale a español
+        try:
+            locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+        except locale.Error:
+            locale.setlocale(locale.LC_TIME, 'es_ES')
 
     def set_plantilla(self, plantilla: PlantillaEmailBase) -> None:
         """Establece una nueva plantilla a utilizar"""

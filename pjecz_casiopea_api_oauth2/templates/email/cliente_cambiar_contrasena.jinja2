@@ -1,113 +1,172 @@
-<div style="display:none;max-height:0px;overflow:hidden">Cambio de contraseña</div>
-<div style="display:none;max-height:0px;overflow:hidden"><ul></ul></div>
-<div>
-<center style="width: 100%; background-color: #e7e7e7;">
-    <div style="max-width:600px;margin:0 auto;padding:0px">
-        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-spacing:0!important;border-collapse:collapse!important;table-layout:fixed!important;margin:0 auto!important;padding:30px 0;margin:auto">
-            <tbody><tr>
-                <td style="background: #252b50;">
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-spacing:0!important;border-collapse:collapse!important;table-layout:fixed!important;margin:0 auto!important">
-                        <tbody>
-                        <tr>
-                            <td style="padding:30px">
-                                <img src="PJECZ_horizontal.png" alt="Logo PJECZ" border="0" style="height:70px; width:auto; margin:auto;display:block;float:left">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 20px; background-color: #cc9a06;">
-                                <h3 style="text-align: left; font-family: helvetica, arial; font-weight: 400; font-size: 30px; line-height: 36px; color: rgb(255, 255, 255); padding: 0px; margin: 0px;">
-                                    Se ha solicitado un cambio de contraseña en el Sistema de Citas del PJECZ
-                                </h3>
-                            </td>
-                        </tr>
-                        </tbody>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f6fa; font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <div style="display:none;max-height:0px;overflow:hidden">Cambio de contraseña</div>
+  <div style="display:none;max-height:0px;overflow:hidden"><ul></ul></div>
+  <center style="width: 100%; background-color: #e7e7e7;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f4f6fa;">
+    <tr>
+      <td style="padding: 40px 0 0 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(18, 21, 40, 0.12);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #121528; padding: 24px 40px;">
+              <p style="margin: 0; color: rgba(255,255,255,0.6); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Sistema de Citas del PJECZ</p>
+            </td>
+          </tr>
+
+          <!-- Title Section - Blue with Lock Icon -->
+          <tr>
+            <td style="background-color: #1a1f3d; padding: 32px 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td width="60" valign="top">
+                    <div style="width: 50px; height: 50px; background-color: rgba(255,255,255,0.15); border-radius: 12px; text-align: center; line-height: 50px;">
+                      <span style="font-size: 28px;">🔐</span>
+                    </div>
+                  </td>
+                  <td style="padding-left: 16px;">
+                    <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 600; line-height: 1.4;">
+                      Se ha solicitado un cambio de contraseña en el Sistema de Citas del PJECZ
+                    </h1>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="padding: 32px 40px 20px 40px;">
+              <h2 style="margin: 0; color: #2d3a1f; font-size: 20px; font-weight: 400;">
+                Hola, <strong>{{nombre_cliente}}</strong>
+              </h2>
+              <p style="margin: 12px 0 0 0; color: #3a4260; font-size: 15px; line-height: 1.6;">Te mostramos la información detallada de tu cuenta:</p>
+            </td>
+          </tr>
+
+          <!-- Account Details Card -->
+          <tr>
+            <td style="padding: 0 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8f9fc; border-radius: 12px; border: 1px solid #e4e6f0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <!-- ID -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px; border-bottom: 1px solid #e4e6f0; padding-bottom: 20px;">
+                      <tr>
+                        <td width="36" valign="top">
+                          <div style="width: 32px; height: 32px; background-color: #121528; border-radius: 8px; text-align: center; line-height: 32px;">
+                            <span style="color: #ffffff; font-size: 14px;">🆔</span>
+                          </div>
+                        </td>
+                        <td style="padding-left: 12px;">
+                          <p style="margin: 0; color: #4a5280; font-size: 12px; font-weight: 500;">ID:</p>
+                          <p style="margin: 4px 0 0 0; color: #121528; font-size: 16px; font-weight: 600;">{{cliente_id}}</p>
+                        </td>
+                      </tr>
                     </table>
-                </td>
-            </tr>
-            <tr>
-                <td style="background: rgb(255, 255, 255); padding: 0px 20px 20px; --darkreader-inline-bgcolor: var(--darkreader-background-ffffff, #181a1b); --darkreader-inline-bgimage: none;" data-darkreader-inline-bgcolor="" data-darkreader-inline-bgimage="">
-                    <h2 style="text-align: left; font-family: helvetica, arial; font-weight: 400; font-size: 21px; line-height: 28px; color: rgb(51, 51, 51); padding: 5px 0px 0px; margin: 20px 0px; ">
-                        Hola, <strong>RICARDO VALDES VILLEGAS</strong>
-                    </h2>
-                    <h4 style="text-align: left; font-family: helvetica, arial; font-size: 18px; line-height: 24px; font-weight: 400; color: rgb(51, 51, 51); padding: 0px; margin: 0px; ">
-                        Te mostramos la información detallada de tu cuenta:
-                    </h4>
-                </td>
-            </tr>
-            <tr>
-                <td style="background: rgb(255, 255, 255); padding: 0px 20px 20px; --darkreader-inline-bgcolor: var(--darkreader-background-ffffff, #181a1b); --darkreader-inline-bgimage: none;" data-darkreader-inline-bgcolor="" data-darkreader-inline-bgimage="">
-                    <div style="padding: 10px 15px 5px; border-radius: 15px; background: rgb(241, 241, 241); --darkreader-inline-bgcolor: var(--darkreader-background-f1f1f1, #202324); --darkreader-inline-bgimage: none;" data-darkreader-inline-bgcolor="" data-darkreader-inline-bgimage="">
-                        <table role="presentation " cellspacing="0" cellpadding="0" border="0" width="100%" style="border-spacing:0!important;border-collapse:collapse!important;table-layout:fixed!important;margin:0 auto!important">
-                            <tbody>
-                            <tr>
-                                <td style="padding: 5px 0px; border-bottom: 1px solid lightgrey; font-family: helvetica, arial; ">
-                                    <h4 style="text-align: left; font-size: 16px; line-height: 20px; font-weight: 400; color: rgb(51, 51, 51); padding: 5px 5px 10px; margin: 0px;">
-                                        🎟️ ID:</h4>
-                                    <h4 style="text-align: left; font-family: helvetica, arial; font-size: 26px; line-height: 30px; font-weight: 400; color: rgb(51, 51, 51); padding: 0px 5px 5px; margin: 0px; ">
-                                        {{cliente_id}}</h4>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 5px 0px; border-bottom: 1px solid lightgrey; font-family: helvetica, arial; ">
-                                    <h4 style="text-align: left; font-size: 16px; line-height: 20px; font-weight: 400; color: rgb(51, 51, 51); padding: 5px 5px 10px; margin: 0px;">
-                                        📧 Email:</h4>
-                                    <h4 style="text-align: left; font-family: helvetica, arial; font-size: 26px; line-height: 30px; font-weight: 400; color: rgb(51, 51, 51); padding: 0px 5px 5px; margin: 0px; ">
-                                        {{cliente_email}}</h4>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 5px 0px; font-family: helvetica, arial; ">
-                                    <h4 style="text-align: left; font-size: 16px; line-height: 20px; font-weight: 400; color: rgb(51, 51, 51); padding: 5px 5px 10px; margin: 0px;">
-                                        📅 Fecha y hora de envío:</h4>
-                                    <h4 style="text-align: left; font-family: helvetica, arial; font-size: 26px; line-height: 30px; font-weight: 400; color: rgb(51, 51, 51); padding: 0px 5px 5px; margin: 0px; ">
-                                        {{fecha_hora_envio}}</h4>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td style="background: rgb(255, 255, 255); padding: 0px 20px 20px; text-align: center; font-family: helvetica, arial; font-size: 18px; color: rgb(51, 51, 51);">
-                    <h4 style="padding: 0; margin: 0;">🌐 Sistema de Citas del PJECZ</h4>
-                    <h4 style="font-family: helvetica, arial; font-size: 20px; line-height: 30px; font-weight: 400; color: rgb(51, 51, 51); padding: 0px 5px 5px; margin: 0px; ">
-                    <a href="{{url_cambio_contrasena}}" style="color:#0d6efd;">Enlace para cambiar la contraseña</a></h4>
-                </td>
-            </tr>
-            <tr>
-                <td style="background: rgb(255, 255, 255); padding: 0px 20px 40px;">
-                    <div style="padding: 10px 15px 5px; border-radius: 15px; background-color: #fff3cd; border-left: 5px solid #997404;">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-spacing:0!important;border-collapse:collapse!important;table-layout:fixed!important;margin:0 auto!important">
-                            <tbody>
-                            <tr>
-                                <td style="padding: 5px 0px; color: #997404;">
-                                    <h4 style="text-align: left; font-family: helvetica, arial; font-size: 20px; font-weight: bold; padding: 5px 5px 10px; margin: 0px; ">
-                                        ⏰ Completa el proceso a tiempo</h4>
-                                    <h4 style="text-align: left; color: #997404; font-family: helvetica, arial; font-size: 16px; font-weight: 100; padding: 5px; margin: 0px; ">
-                                        Antes de 48 horas ingrese al enlace para validar y definir su contraseña.</h4>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-spacing:0!important;border-collapse:collapse!important;table-layout:fixed!important;margin:0 auto!important;">
-                    <tbody>
-                    <tr>
-                        <td style="background: #252b50; color:burlywood; padding: 10px; text-align: center; font-family: helvetica, arial; font-size: x-small;">© 2026 Todos los derechos reservados. Términos y condiciones</td>
-                    </tr>
-                    <tr>
-                        <td style="color: gray; padding: 10px 10px 40px 10px; text-align: center; font-style: italic; font-family: helvetica, arial; font-size: small;">Este correo fue generado automáticamente, favor de no contestar</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </tr>
-        </tbody>
-    </table>
-</div>
+
+                    <!-- Email -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px; border-bottom: 1px solid #e4e6f0; padding-bottom: 20px;">
+                      <tr>
+                        <td width="36" valign="top">
+                          <div style="width: 32px; height: 32px; background-color: #1a1f3d; border-radius: 8px; text-align: center; line-height: 32px;">
+                            <span style="color: #ffffff; font-size: 14px;">📧</span>
+                          </div>
+                        </td>
+                        <td style="padding-left: 12px;">
+                          <p style="margin: 0; color: #4a5280; font-size: 12px; font-weight: 500;">Email:</p>
+                          <p style="margin: 4px 0 0 0; color: #121528; font-size: 16px; font-weight: 600;">
+                            <a href="mailto:{{EMAIL}}" style="color: #121528; text-decoration: none;">{{cliente_email}}</a>
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Fecha y hora de envío -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td width="36" valign="top">
+                          <div style="width: 32px; height: 32px; background-color: #2a3152; border-radius: 8px; text-align: center; line-height: 32px;">
+                            <span style="color: #ffffff; font-size: 14px;">📅</span>
+                          </div>
+                        </td>
+                        <td style="padding-left: 12px;">
+                          <p style="margin: 0; color: #4a5280; font-size: 12px; font-weight: 500;">Fecha y hora de envío:</p>
+                          <p style="margin: 4px 0 0 0; color: #121528; font-size: 16px; font-weight: 600;">{{fecha_hora_envio}}</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Password Change Link Section -->
+          <tr>
+            <td style="padding: 24px 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="text-align: center;">
+                <tr>
+                  <td>
+                    <p style="margin: 0 0 8px 0; color: #3a4260; font-size: 14px; font-weight: 600;">
+                      🌐 Sistema de Citas del PJECZ
+                    </p>
+                    <a href="{{url_cambio_contrasena}}" style="color: #2563eb; font-size: 14px; text-decoration: underline;">
+                      Enlace para cambiar la contraseña
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Warning Message -->
+          <tr>
+            <td style="padding: 0 40px 32px 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fff3cd; border-radius: 12px; border-left: 4px solid #ffc107;">
+                <tr>
+                  <td style="padding: 20px 24px;">
+                    <p style="margin: 0 0 8px 0; color: #856404; font-size: 16px; font-weight: 700;">
+                      <span style="margin-right: 8px; font-size: 20px;">⏰</span> Completa el proceso a tiempo
+                    </p>
+                    <p style="margin: 0; color: #856404; font-size: 14px; line-height: 1.5; font-style: italic;">
+                      Antes de 48 horas ingrese al enlace para validar y definir su contraseña.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #121528; padding: 20px 40px;">
+              <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 12px; text-align: center;">
+                © 2026 Todos los derechos reservados. Términos y condiciones.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <!-- Disclaimer -->
+    <tr>
+      <td style="padding: 16px 40px;">
+        <p style="margin: 0; color: #6a7280; font-size: 12px; text-align: center; font-style: italic;">
+          Este correo fue generado automáticamente, favor de no contestar
+        </p>
+      </td>
+    </tr>
+  </table>
 </center>
-</div>
-</div>
+</body>
