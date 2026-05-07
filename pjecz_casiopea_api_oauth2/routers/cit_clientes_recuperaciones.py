@@ -7,11 +7,8 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Annotated
 
-import pytz
-import sendgrid
 from fastapi import APIRouter, Depends
 from passlib.context import CryptContext
-from sendgrid.helpers.mail import Content, Email, Mail, To
 
 from ..config.settings import Settings, get_settings
 from ..dependencies.database import Session, get_db
@@ -26,6 +23,8 @@ from ..schemas.cit_clientes_recuperaciones import (
     TerminarCitClienteRecuperacionIn,
     ValidarCitClienteRecuperacionIn,
 )
+from ..services.sendmail import MyRequestError, Email, PlantillaClienteCambiarContrasena, PlantillaClienteCompletado
+
 
 EXPIRACION_HORAS = 48
 RENOVACION_DIAS = 365
@@ -74,46 +73,25 @@ async def solicitar(
     database.commit()
     database.refresh(cit_cliente_recuperacion)
 
-    # Elaborar el asunto del mensaje
-    asunto_str = "Cambiar su contraseña en el Sistema de Citas PJECZ"
-
     # Elaborar el URL de verificación
     verificacion_url = settings.RECOVER_WEB_PAGE_URL
     verificacion_url = f"{verificacion_url}?id={str(cit_cliente_recuperacion.id)}"
     verificacion_url = f"{verificacion_url}&cadena_validar={cit_cliente_recuperacion.cadena_validar}"
 
-    # Elaborar el contenido del mensaje
-    fecha_envio = datetime.now(tz=pytz.timezone(settings.TZ)).strftime("%d/%b/%Y %H:%M")
-    contenidos = []
-    contenidos.append(f"<h2>{asunto_str}</h2>")
-    contenidos.append(f"<p>Enviado el {fecha_envio}</p>")
-    contenidos.append("<p><strong>Antes de 48 horas vaya a este URL para cambiar su contraseña:</strong></p>")
-    contenidos.append("<ul>")
-    contenidos.append(f"<li>{verificacion_url}</li>")
-    contenidos.append("</ul>")
-    contenidos.append("<p>Este mensaje fue enviado por un programa. <em>NO RESPONDA ESTE MENSAJE.</em></p>")
-    contenido_html = "\n".join(contenidos)
-
-    # Enviar el e-mail
-    send_grid = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
-    to_email = To(cit_cliente_recuperacion.cit_cliente.email)
-    remitente_email = Email(settings.SENDGRID_FROM_EMAIL)
-    contenido = Content("text/html", contenido_html)
-    mail = Mail(
-        from_email=remitente_email,
-        to_emails=to_email,
-        subject=asunto_str,
-        html_content=contenido,
+    # Crear plantilla de email
+    plantilla_email_cliente_cambio_contrasena = PlantillaClienteCambiarContrasena(
+        nombre_cliente=cit_cliente.nombre,
+        cliente_id=str(cit_cliente.id),
+        cliente_email=cit_cliente.email,
+        url_cambio_contrasena=verificacion_url,
     )
 
-    # Enviar mensaje de correo electrónico
+    # Enviar Email por SendGrid
+    send_email = Email(cit_cliente.email, plantilla_email_cliente_cambio_contrasena)
     try:
-        send_grid.send(mail)
-    except Exception as error:
-        return OneCitClienteRecuperacionOut(
-            success=False,
-            message=f"Error al enviar el mensaje por Sendgrid: {str(error)}",
-        )
+        send_email.enviar_email()
+    except MyRequestError as error:
+        return OneCitClienteRecuperacionOut(success=False, message=f"Error al enviar el mensaje por Sendgrid: {str(error)}")
 
     # Entregar
     return OneCitClienteRecuperacionOut(
@@ -222,41 +200,20 @@ async def terminar(
     database.commit()
     database.refresh(cit_cliente_recuperacion)
 
-    # Elaborar el asunto del mensaje
-    asunto_str = "Se ha completado el cambio de contraseña al Sistema de Citas PJECZ"
-
-    # Elaborar el contenido del mensaje
-    fecha_envio = datetime.now(tz=pytz.timezone(settings.TZ)).strftime("%d/%b/%Y %H:%M")
-    contenidos = []
-    contenidos.append(f"<h2>{asunto_str}</h2>")
-    contenidos.append(f"<p>Enviado el {fecha_envio}</p>")
-    contenidos.append("<p><strong>Ha cambiado su contraseña y ya puede ingresar al Sistema de Citas PJECZ</strong></p>")
-    contenidos.append("<ul>")
-    contenidos.append(f'<li><a href="{settings.HOST}">{settings.HOST}</a></li>')
-    contenidos.append("</ul>")
-    contenidos.append("<p>Este mensaje fue enviado por un programa. <em>NO RESPONDA ESTE MENSAJE.</em></p>")
-    contenido_html = "\n".join(contenidos)
-
-    # Enviar el e-mail
-    send_grid = sendgrid.SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
-    to_email = To(cit_cliente_recuperacion.cit_cliente.email)
-    remitente_email = Email(settings.SENDGRID_FROM_EMAIL)
-    contenido = Content("text/html", contenido_html)
-    mail = Mail(
-        from_email=remitente_email,
-        to_emails=to_email,
-        subject=asunto_str,
-        html_content=contenido,
+    # Crear plantilla para mostrar mensaje de éxito de proceso completado de registro
+    plantilla_email_cliente_completado = PlantillaClienteCompletado(
+        nombre_cliente=cit_cliente.nombre,
+        cliente_id=str(cit_cliente.id),
+        cliente_email=cit_cliente.email,
+        url_sistema_citas=settings.HOST,
     )
 
-    # Enviar mensaje de correo electrónico
+    # Enviar Email por SendGrid
+    send_email = Email(cit_cliente.email, plantilla_email_cliente_completado)
     try:
-        send_grid.send(mail)
-    except Exception as error:
-        return OneCitClienteRecuperacionOut(
-            success=False,
-            message=f"Error al enviar el mensaje por Sendgrid: {str(error)}",
-        )
+        send_email.enviar_email()
+    except MyRequestError as error:
+        return OneCitClienteRecuperacionOut(success=False, message=str(error))
 
     # Entregar
     return OneCitClienteRecuperacionOut(

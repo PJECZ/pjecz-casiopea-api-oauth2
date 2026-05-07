@@ -1,0 +1,68 @@
+[project]
+name = "pjecz-casiopea-api-oauth2"
+version = "0.1.0"
+description = "API con autentificación OAuth2 para el sistema de citas."
+authors = [
+    {name = "Guillermo Valdes",email = "guillermo.valdes@pjecz.gob.mx"}
+]
+license = {text = "AGPL3"}
+readme = "README.md"
+requires-python = ">=3.13,<4.0"
+dependencies = [
+    "cryptography (>=46.0.3,<47.0.0)",
+    "hashids (>=1.3.1,<2.0.0)",
+    "pytz (>=2025.2,<2026.0)",
+    "unidecode (>=1.4.0,<2.0.0)",
+    "gunicorn (>=23.0.0,<24.0.0)",
+    "uvicorn (>=0.38.0,<0.39.0)",
+    "psycopg2-binary (>=2.9.11,<3.0.0)",
+    "sqlalchemy (>=2.0.44,<3.0.0)",
+    "sqlalchemy-utils (>=0.42.0,<0.43.0)",
+    "pydantic (>=2.12.5,<3.0.0)",
+    "pydantic-settings (>=2.12.0,<3.0.0)",
+    "fastapi (>=0.123.8,<0.124.0)",
+    "fastapi-pagination[sqlalchemy] (>=0.15.1,<0.16.0)",
+    "sendgrid (>=6.12.5,<7.0.0)",
+    "requests (>=2.32.5,<3.0.0)",
+    "passlib[bcrypt] (>=1.7.4,<2.0.0)",
+    "pyjwt (>=2.10.1,<3.0.0)",
+    "python-multipart (>=0.0.20,<0.0.21)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "black (>=25.11.0,<26.0.0)",
+    "faker (>=38.2.0,<39.0.0)",
+    "isort (>=7.0.0,<8.0.0)",
+    "pre-commit (>=4.5.0,<5.0.0)",
+    "pylint (>=4.0.4,<5.0.0)",
+    "pylint-sqlalchemy (>=0.3.0,<0.4.0)",
+    "pytest (>=9.0.1,<10.0.0)",
+    "python-dotenv (>=1.2.1,<2.0.0)"
+]
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
+
+[tool.black]
+line-length = 128
+
+[tool.isort]
+line_length = 128
+profile = "black"
+
+[tool.basedpyright]
+typeCheckingMode = "basic"
+reportCallIssue = "hint"
+reportMissingImports = "warning"
+reportUndefinedVariable = "warning"
+exclude = ["**/tests"]
+
+[tool.ruff]
+ignore = ["F821"]
+line-length = 128

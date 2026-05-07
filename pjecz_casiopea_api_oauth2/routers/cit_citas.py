@@ -27,6 +27,7 @@ from ..schemas.cit_citas import CitCitaIn, CitCitaOut, OneCitCitaOut
 from ..schemas.cit_clientes import CitClienteInDB
 from .cit_dias_disponibles import listar_dias_disponibles
 from .cit_horas_disponibles import listar_horas_disponibles
+from ..services.sendmail import MyRequestError, Email, PlantillaCitaCancelada, PlantillaCitaCreada
 
 LIMITE_CITAS_PENDIENTES = 3
 
@@ -65,7 +66,23 @@ async def cancelar(
     database.add(cit_cita)
     database.commit()
 
-    # TODO: Agregar tarea en el fondo para que se envíe un mensaje vía correo electrónico
+    # Creación de la plantilla para el email
+    plantilla_email_cita_cancelada = PlantillaCitaCancelada(
+        id=str(cit_cita_uuid),
+        nombre_cliente=cit_cita.cit_cliente.nombre,
+        oficina=cit_cita.oficina_descripcion,
+        servicio=cit_cita.cit_servicio_descripcion,
+        fecha_hora_cita=cit_cita.inicio,
+        notas=cit_cita.notas,
+        fecha_hora_cancelacion=datetime.now(),
+    )
+
+    # Envío de email
+    send_email = Email(cit_cita.cit_cliente_email, plantilla_email_cita_cancelada)
+    try:
+        send_email.enviar_email()
+    except MyRequestError as error:
+        return OneCitCitaOut(success=False, message=str(error))
 
     # Entregar
     return OneCitCitaOut(
@@ -257,7 +274,23 @@ async def crear(
     database.commit()
     database.refresh(cit_cita)
 
-    # TODO: Agregar tarea en el fondo para que se envíe un mensaje vía correo electrónico
+    # Creación de la plantilla para el email
+    plantilla_email_cita_creada = PlantillaCitaCreada(
+        id=str(cit_cita.id),
+        nombre_cliente=cit_cita.cit_cliente.nombre,
+        oficina=cit_cita.oficina_descripcion,
+        servicio=cit_cita.cit_servicio_descripcion,
+        fecha_hora_cita=cit_cita.inicio,
+        notas=cit_cita.notas,
+        codigo_qr_url=cit_cita.codigo_acceso_url,
+    )
+
+    # Envío de email
+    send_email = Email(cit_cita.cit_cliente_email, plantilla_email_cita_creada)
+    try:
+        send_email.enviar_email()
+    except MyRequestError as error:
+        return OneCitCitaOut(success=False, message=str(error))
 
     # Entregar
     return OneCitCitaOut(
