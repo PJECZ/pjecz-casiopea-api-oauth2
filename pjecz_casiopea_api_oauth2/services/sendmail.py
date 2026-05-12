@@ -46,7 +46,7 @@ class PlantillaEmailBase(ABC):
 
         # Configurar el locale a español
         try:
-            locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+            locale.setlocale(locale.LC_TIME, 'es_ES.utf8')
         except locale.Error:
             locale.setlocale(locale.LC_TIME, 'es_ES')
 
@@ -242,7 +242,7 @@ class Email():
 
         # Configurar el locale a español
         try:
-            locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+            locale.setlocale(locale.LC_TIME, 'es_ES.utf8')
         except locale.Error:
             locale.setlocale(locale.LC_TIME, 'es_ES')
 
