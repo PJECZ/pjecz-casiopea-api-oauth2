@@ -180,10 +180,11 @@ class PlantillaCitaCreada(PlantillaEmailBase):
         'servicio': '',
         'fecha_hora_cita': '',
         'notas': '',
+        'codigo_asistencia': '',
         'codigo_qr_url': '',
     }
 
-    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_hora_cita: datetime, notas: str, codigo_qr_url: str):
+    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_hora_cita: datetime, notas: str, codigo_asistencia: str, codigo_qr_url: str):
         super().__init__()
 
         self._variables_contenido['id'] = id
@@ -192,6 +193,7 @@ class PlantillaCitaCreada(PlantillaEmailBase):
         self._variables_contenido['servicio'] = servicio
         self._variables_contenido['fecha_hora_cita'] = fecha_hora_cita.strftime(self.FORMATO_FECHA_Y_HORA)
         self._variables_contenido['notas'] = notas
+        self._variables_contenido['codigo_asistencia'] = codigo_asistencia
         self._variables_contenido['codigo_qr_url'] = codigo_qr_url
 
 

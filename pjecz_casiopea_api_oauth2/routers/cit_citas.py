@@ -282,6 +282,7 @@ async def crear(
         servicio=cit_cita.cit_servicio_descripcion,
         fecha_hora_cita=cit_cita.inicio,
         notas=cit_cita.notas,
+        codigo_asistencia=cit_cita.codigo_asistencia,
         codigo_qr_url=cit_cita.codigo_acceso_url,
     )
 
