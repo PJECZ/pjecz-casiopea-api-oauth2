@@ -82,7 +82,7 @@ class PlantillaClienteValidarCuenta(PlantillaEmailBase):
     Define los datos necesarios para la plantilla de validación de una cuenta de un cliente.
     """
     template_name = "cliente_validar_cuenta.jinja2"
-    subject = "Valida tu email para utilizar el Sistema de Citas PJECZ"
+    subject = "Valida tu email para utilizar el Sistema de Citas SAJI"
     _variables_contenido: dict[str, str] = {
         'nombre_cliente': '',
         'cliente_id': '',
@@ -102,7 +102,7 @@ class PlantillaClienteCambiarContrasena(PlantillaEmailBase):
     Define los datos necesarios para la plantilla de cambio de contraseña de un cliente.
     """
     template_name = "cliente_cambiar_contrasena.jinja2"
-    subject = "Cambiar su contraseña del Sistema de Citas PJECZ"
+    subject = "Cambiar su contraseña"
     _variables_contenido: dict[str, str] = {
         'nombre_cliente': '',
         'cliente_id': '',
@@ -126,7 +126,7 @@ class PlantillaClienteCompletado(PlantillaEmailBase):
     """
 
     template_name = "cliente_completado.jinja2"
-    subject = "Se ha completado el registro en el Sistema de Citas PJECZ"
+    subject = "Se ha completado el registro"
     _variables_contenido: dict[str, str] = {
         'nombre_cliente': '',
         'cliente_id': '',
@@ -172,7 +172,7 @@ class PlantillaCitaCreada(PlantillaEmailBase):
     Plantilla para la creación de una cita.
     """
     template_name = "cita_creada.jinja2"
-    subject = "Cita Agendada en el Sistema de Citas PJECZ"
+    subject = "Cita Agendada"
     _variables_contenido: dict[str, str] = {
         'nombre_cliente': '',
         'id': '',
@@ -180,10 +180,11 @@ class PlantillaCitaCreada(PlantillaEmailBase):
         'servicio': '',
         'fecha_hora_cita': '',
         'notas': '',
+        'codigo_asistencia': '',
         'codigo_qr_url': '',
     }
 
-    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_hora_cita: datetime, notas: str, codigo_qr_url: str):
+    def __init__(self, id: str, nombre_cliente: str, oficina: str, servicio: str, fecha_hora_cita: datetime, notas: str, codigo_asistencia: str, codigo_qr_url: str):
         super().__init__()
 
         self._variables_contenido['id'] = id
@@ -192,6 +193,7 @@ class PlantillaCitaCreada(PlantillaEmailBase):
         self._variables_contenido['servicio'] = servicio
         self._variables_contenido['fecha_hora_cita'] = fecha_hora_cita.strftime(self.FORMATO_FECHA_Y_HORA)
         self._variables_contenido['notas'] = notas
+        self._variables_contenido['codigo_asistencia'] = codigo_asistencia
         self._variables_contenido['codigo_qr_url'] = codigo_qr_url
 
 
@@ -200,7 +202,7 @@ class PlantillaCitaCancelada(PlantillaEmailBase):
     Plantilla para la cancelación de una cita.
     """
     template_name = "cita_cancelada.jinja2"
-    subject = "Cita Cancelada en el Sistema de Citas PJECZ"
+    subject = "Cita Cancelada"
     _variables_contenido: dict[str, str] = {
         'nombre_cliente': '',
         'id': '',
