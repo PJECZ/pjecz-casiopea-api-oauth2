@@ -361,5 +361,5 @@ async def mis_citas(
     """Mis PROPIAS citas en estado PENDIENTE"""
     if current_user.permissions.get("CIT CITAS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    consulta = database.query(CitCita).filter(CitCita.cit_cliente_id == current_user.id).filter(CitCita.estado == "PENDIENTE")
+    consulta = database.query(CitCita).filter(CitCita.cit_cliente_id == current_user.id).filter(CitCita.inicio >= datetime.now()).filter(CitCita.estado == "PENDIENTE").filter(CitCita.estatus == "A")
     return paginate(consulta.filter(CitCita.estatus == "A").order_by(CitCita.creado.desc()))
