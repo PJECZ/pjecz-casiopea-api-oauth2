@@ -19,6 +19,7 @@ class CitServicioOut(BaseModel):
     desde: time | None = None
     hasta: time | None = None
     dias_habilitados: str
+    instrucciones: str | None = None
     model_config = ConfigDict(from_attributes=True)
 
 
