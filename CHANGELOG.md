@@ -3,6 +3,18 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.3.0] - 2026-05-22
+
+### ✨ Mejoras
+
+- Añadido campo `instrucciones` al modelo `cit_servicios` y añadirlo en la entrega de su _endpoint_.
+- Mensaje de requisitos en plantilla para cita creada. "_Debes presentar tu credencial de identificación (INE) vigente_".
+- Añadido _endpoint_ `exp_juzgados`. Para entrega de los juzgados de los que se pueden pedir expedientes, en el servicio de "revisión de expedientes" preferentemente para la unidad de "Archivo".
+- Descripción de la versión en la documentación _swagger_ hecha por defecto.
+- Archivo `README.md`. Más completo y organizado.
+- Archivo `CONTRIBUTING.md`. Explica las reglas para colaborar en este proyecto.
+- Archivo `.env.example` como ejemplo de la configuración de variables de entorno.
+
 
 ## [1.2.1] - 2026-05-20
 
@@ -18,6 +30,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 ### 🐞 Arreglado
 
 - El _endpoint_ `mis_citas` ahora filtra que las citas no estén eliminadas y no sean pasadas a la fecha de hoy.
+
 
 ## [1.1.3] - 2026-04-26
 
