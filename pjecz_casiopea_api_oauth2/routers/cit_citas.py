@@ -227,8 +227,10 @@ async def crear(
         "apellidos": f"{current_user.apellido_primero} {current_user.apellido_segundo}",
         "correoElectronico": current_user.email,
         "telefono": f"+52{current_user.telefono}",
+        "Duracion": 60,
         "fecha": inicio_dt.isoformat(timespec="minutes"),
         "cita": True,
+        "PrivilegeGroups": [],
     }
     try:
         respuesta = requests.post(
