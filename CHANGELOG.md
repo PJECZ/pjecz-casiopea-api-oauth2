@@ -23,6 +23,10 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
     - `python-barcode pillow`
     - `google-cloud-storage`
 
+- Añadir nuevas variables de entorno:
+    - `GOOGLE_APPLICATION_CREDENTIALS`
+    - `GCS_BUCKET_NAME`
+
 
 ## [1.3.0] - 2026-05-22
 
