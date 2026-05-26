@@ -264,8 +264,12 @@ async def crear(
     codigo_barras = CodigoBarras(database)
     try:
         codigo_barras_num, codigo_barras_url = codigo_barras.crear_y_subir()
-    except:
-        return OneCitCitaOut(success=False, message="ERROR: Faltó la imagen del código de barras de asistencia")
+    except ConnectionError as e:
+        # Captura errores de conexión o de la API de Google Storage
+        return OneCitCitaOut(success=False, message=f"ERROR: Falló la comunicación para generar el código de barras de asistencia. {e}")
+    except Exception as e:
+        # Captura cualquier otro error inesperado durante la generación
+        return OneCitCitaOut(success=False, message=f"ERROR: No se pudo generar el código de barras de asistencia. {e}")
 
     # Guardar
     cit_cita = CitCita(
