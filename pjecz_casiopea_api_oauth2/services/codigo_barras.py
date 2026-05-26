@@ -127,10 +127,10 @@ class CodigoBarras():
         opciones_diseno = {
             'format': 'PNG',
             'dpi': 300,              # Alta resolución para impresión o pantallas
-            'module_height': 15.0,   # Altura de las barras
-            'module_width': 0.3,     # Ancho de cada barra individual
+            'module_height': 10.0,   # Altura de las barras
+            'module_width': 0.2,     # Ancho de cada barra individual
             'font_size': 10,         # Tamaño del texto que sale abajo
-            'text_distance': 3.0,    # Distancia entre las barras y el texto
+            'text_distance': 4.0,    # Distancia entre las barras y el texto
             'quiet_zone': 5.0        # Margen blanco a los lados para que el lector enfoque bien
         }
 
