@@ -28,6 +28,7 @@ from ..schemas.cit_clientes import CitClienteInDB
 from .cit_dias_disponibles import listar_dias_disponibles
 from .cit_horas_disponibles import listar_horas_disponibles
 from ..services.sendmail import MyRequestError, Email, PlantillaCitaCancelada, PlantillaCitaCreada
+from ..services.codigo_barras import CodigoBarras
 
 LIMITE_CITAS_PENDIENTES = 3
 
@@ -255,6 +256,15 @@ async def crear(
     if not codigo_acceso_url:
         return OneCitCitaOut(success=False, message="ERROR: Faltó la imagen en la respuesta de Control Acceso")
 
+    # Crear el código de barras de asistencia
+    codigo_barras_num = None
+    codigo_barras_url = None
+    codigo_barras = CodigoBarras(database)
+    try:
+        codigo_barras_num, codigo_barras_url = codigo_barras.crear_y_subir()
+    except:
+        return OneCitCitaOut(success=False, message="ERROR: Faltó la imagen del código de barras de asistencia")
+
     # Guardar
     cit_cita = CitCita(
         cit_cliente_id=current_user.id,
@@ -269,6 +279,8 @@ async def crear(
         codigo_asistencia=generar_codigo_asistencia(),
         codigo_acceso_id=codigo_acceso_id,
         codigo_acceso_url=codigo_acceso_url,
+        codigo_barras=codigo_barras_num,
+        codigo_barras_url=codigo_barras_url,
     )
     database.add(cit_cita)
     database.commit()

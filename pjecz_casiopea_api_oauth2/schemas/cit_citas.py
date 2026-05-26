@@ -45,6 +45,8 @@ class CitCitaOut(BaseModel):
     codigo_acceso_url: str
     creado: datetime
     puede_cancelarse: bool
+    codigo_barras: str | None = None
+    codigo_barras_url: str | None = None
     model_config = ConfigDict(from_attributes=True)
 
 
