@@ -380,8 +380,8 @@ async def mis_citas(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
 ):
-    """Mis PROPIAS citas en estado PENDIENTE"""
+    """Mis PROPIAS citas en estado PENDIENTE o ASISTIO"""
     if current_user.permissions.get("CIT CITAS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    consulta = database.query(CitCita).filter(CitCita.cit_cliente_id == current_user.id).filter(func.date(CitCita.inicio) >= datetime.now().date()).filter(CitCita.estado == "PENDIENTE").filter(CitCita.estatus == "A")
+    consulta = database.query(CitCita).filter(CitCita.cit_cliente_id == current_user.id).filter(func.date(CitCita.inicio) >= datetime.now().date()).filter(CitCita.estado.in_(["PENDIENTE", "ASISTIO"])).filter(CitCita.estatus == "A")
     return paginate(consulta.order_by(CitCita.inicio.desc()))
