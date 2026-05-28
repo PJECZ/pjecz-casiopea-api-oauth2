@@ -7,6 +7,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### ✨ Mejoras
 
+- Al entregar las citas agendadas de un cliente, solo se entregan las que son de hoy en adelante, están en estado de Pendiente y activas.
 - Validar el campo booleano `oficinas.puede_enviar_qr` para incluir el código QR y código de barras de asistencia en los emails al crear una cita.
 - Mejorado el mensaje de error al fallar la generación del código de barras de asistencia.
 - Añadido el código de barras de asistencia a la plantilla de cita creada.

@@ -9,6 +9,7 @@ import requests
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy import func
 
 from ..config.settings import Settings, get_settings
 from ..dependencies.authentications import get_current_active_user
@@ -382,5 +383,5 @@ async def mis_citas(
     """Mis PROPIAS citas en estado PENDIENTE"""
     if current_user.permissions.get("CIT CITAS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    consulta = database.query(CitCita).filter(CitCita.cit_cliente_id == current_user.id).filter(CitCita.inicio >= datetime.now()).filter(CitCita.estado == "PENDIENTE").filter(CitCita.estatus == "A")
-    return paginate(consulta.filter(CitCita.estatus == "A").order_by(CitCita.creado.desc()))
+    consulta = database.query(CitCita).filter(CitCita.cit_cliente_id == current_user.id).filter(func.date(CitCita.inicio) >= datetime.now().date()).filter(CitCita.estado == "PENDIENTE").filter(CitCita.estatus == "A")
+    return paginate(consulta.order_by(CitCita.inicio.desc()))
