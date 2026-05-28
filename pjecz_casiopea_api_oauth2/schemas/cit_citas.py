@@ -42,7 +42,7 @@ class CitCitaOut(BaseModel):
     asistencia: bool
     codigo_asistencia: str
     # codigo_acceso_imagen_base64: str
-    codigo_acceso_url: str
+    codigo_acceso_url: str | None = None
     creado: datetime
     puede_cancelarse: bool
     codigo_barras: str | None = None

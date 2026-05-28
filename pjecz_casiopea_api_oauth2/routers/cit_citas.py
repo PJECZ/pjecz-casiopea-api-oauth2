@@ -220,56 +220,59 @@ async def crear(
         if cancelar_antes.weekday() == 5:  # Si es sábado, se cambia a viernes
             cancelar_antes = cancelar_antes - timedelta(days=1)
 
-    # Obtener código de acceso, entrega idAcceso (int), imagen (str), success (bool) y message (str)
-    payload = {
-        "aplicacion": settings.CONTROL_ACCESO_APLICACION,
-        "referencia": generar_referencia(current_user.email, cit_servicio.clave, oficina.clave, inicio_dt),
-        "nombres": current_user.nombres,
-        "apellidos": f"{current_user.apellido_primero} {current_user.apellido_segundo}",
-        "correoElectronico": current_user.email,
-        "telefono": f"+52{current_user.telefono}",
-        "Duracion": 60,
-        "fecha": inicio_dt.isoformat(timespec="minutes"),
-        "cita": True,
-        "PrivilegeGroups": [],
-    }
-    try:
-        respuesta = requests.post(
-            url=settings.CONTROL_ACCESO_URL,
-            headers={"X-Api-Key": settings.CONTROL_ACCESO_API_KEY},
-            timeout=settings.CONTROL_ACCESO_TIMEOUT,
-            json=payload,
-        )
-    except requests.exceptions.ConnectionError as error:
-        return OneCitCitaOut(success=False, message=f"ERROR: No responde Control Acceso: {str(error)}")
-    if respuesta.status_code != 200:
-        return OneCitCitaOut(
-            success=False, message=f"ERROR: No fue código 200 la respuesta de Control Acceso: {respuesta.text}"
-        )
-    contenido = respuesta.json()
-    if contenido.get("success") is False:
-        return OneCitCitaOut(
-            success=False, message=f"ERROR: Falló la obtención del Código de Acceso: {contenido.get('message')}"
-        )
-    codigo_acceso_id = contenido.get("idAcceso")
-    if not codigo_acceso_id:
-        return OneCitCitaOut(success=False, message="ERROR: Faltó la idAcceso en la respuesta de Control Acceso")
-    codigo_acceso_url = contenido.get("imagen")
-    if not codigo_acceso_url:
-        return OneCitCitaOut(success=False, message="ERROR: Faltó la imagen en la respuesta de Control Acceso")
-
-    # Crear el código de barras de asistencia
+    codigo_acceso_id = None
+    codigo_acceso_url = None
     codigo_barras_num = None
     codigo_barras_url = None
-    codigo_barras = CodigoBarras(database)
-    try:
-        codigo_barras_num, codigo_barras_url = codigo_barras.crear_y_subir()
-    except ConnectionError as e:
-        # Captura errores de conexión o de la API de Google Storage
-        return OneCitCitaOut(success=False, message=f"ERROR: Falló la comunicación para generar el código de barras de asistencia. {e}")
-    except Exception as e:
-        # Captura cualquier otro error inesperado durante la generación
-        return OneCitCitaOut(success=False, message=f"ERROR: No se pudo generar el código de barras de asistencia. {e}")
+    if oficina.puede_enviar_qr:
+        # Obtener código de acceso, entrega idAcceso (int), imagen (str), success (bool) y message (str)
+        payload = {
+            "aplicacion": settings.CONTROL_ACCESO_APLICACION,
+            "referencia": generar_referencia(current_user.email, cit_servicio.clave, oficina.clave, inicio_dt),
+            "nombres": current_user.nombres,
+            "apellidos": f"{current_user.apellido_primero} {current_user.apellido_segundo}",
+            "correoElectronico": current_user.email,
+            "telefono": f"+52{current_user.telefono}",
+            "Duracion": 60,
+            "fecha": inicio_dt.isoformat(timespec="minutes"),
+            "cita": True,
+            "PrivilegeGroups": [],
+        }
+        try:
+            respuesta = requests.post(
+                url=settings.CONTROL_ACCESO_URL,
+                headers={"X-Api-Key": settings.CONTROL_ACCESO_API_KEY},
+                timeout=settings.CONTROL_ACCESO_TIMEOUT,
+                json=payload,
+            )
+        except requests.exceptions.ConnectionError as error:
+            return OneCitCitaOut(success=False, message=f"ERROR: No responde Control Acceso: {str(error)}")
+        if respuesta.status_code != 200:
+            return OneCitCitaOut(
+                success=False, message=f"ERROR: No fue código 200 la respuesta de Control Acceso: {respuesta.text}"
+            )
+        contenido = respuesta.json()
+        if contenido.get("success") is False:
+            return OneCitCitaOut(
+                success=False, message=f"ERROR: Falló la obtención del Código de Acceso: {contenido.get('message')}"
+            )
+        codigo_acceso_id = contenido.get("idAcceso")
+        if not codigo_acceso_id:
+            return OneCitCitaOut(success=False, message="ERROR: Faltó la idAcceso en la respuesta de Control Acceso")
+        codigo_acceso_url = contenido.get("imagen")
+        if not codigo_acceso_url:
+            return OneCitCitaOut(success=False, message="ERROR: Faltó la imagen en la respuesta de Control Acceso")
+
+        # Crear el código de barras de asistencia
+        codigo_barras = CodigoBarras(database)
+        try:
+            codigo_barras_num, codigo_barras_url = codigo_barras.crear_y_subir()
+        except ConnectionError as e:
+            # Captura errores de conexión o de la API de Google Storage
+            return OneCitCitaOut(success=False, message=f"ERROR: Falló la comunicación para generar el código de barras de asistencia. {e}")
+        except Exception as e:
+            # Captura cualquier otro error inesperado durante la generación
+            return OneCitCitaOut(success=False, message=f"ERROR: No se pudo generar el código de barras de asistencia. {e}")
 
     # Guardar
     cit_cita = CitCita(

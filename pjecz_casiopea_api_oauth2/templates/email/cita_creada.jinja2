@@ -147,7 +147,8 @@
             </td>
           </tr>
 
-          <!-- Mensaje -->
+          <!-- QR -->
+          {% if codigo_qr_url %}
           <tr>
             <td style="padding: 24px 40px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="text-align: center;">
@@ -165,6 +166,7 @@
               </table>
             </td>
           </tr>
+          {% endif %}
 
           <!-- Mensaje de advertencia -->
           <tr>
@@ -204,6 +206,7 @@
           </tr>
 
           <!-- Código de Barras -->
+          {% if codigo_barras_url %}
           <tr>
             <td style="padding: 24px 40px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="text-align: center;">
@@ -221,6 +224,7 @@
               </table>
             </td>
           </tr>
+          {% endif %}
 
           <!-- Footer -->
           <tr>

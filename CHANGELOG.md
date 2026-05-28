@@ -7,6 +7,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### ✨ Mejoras
 
+- Validar el campo booleano `oficinas.puede_enviar_qr` para incluir el código QR y código de barras de asistencia en los emails al crear una cita.
 - Mejorado el mensaje de error al fallar la generación del código de barras de asistencia.
 - Añadido el código de barras de asistencia a la plantilla de cita creada.
 - Nuevo servicio para creación de un código de barras para identificar la cita. Con esto se podrá marcar la asistencia del cliente y añadirlo al sistema de turnos.
