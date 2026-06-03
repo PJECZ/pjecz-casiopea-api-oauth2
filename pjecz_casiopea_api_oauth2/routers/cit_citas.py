@@ -9,6 +9,7 @@ import requests
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy import func
 
 from ..config.settings import Settings, get_settings
 from ..dependencies.authentications import get_current_active_user
@@ -28,6 +29,7 @@ from ..schemas.cit_clientes import CitClienteInDB
 from .cit_dias_disponibles import listar_dias_disponibles
 from .cit_horas_disponibles import listar_horas_disponibles
 from ..services.sendmail import MyRequestError, Email, PlantillaCitaCancelada, PlantillaCitaCreada
+from ..services.codigo_barras import CodigoBarras
 
 LIMITE_CITAS_PENDIENTES = 3
 
@@ -219,43 +221,59 @@ async def crear(
         if cancelar_antes.weekday() == 5:  # Si es sábado, se cambia a viernes
             cancelar_antes = cancelar_antes - timedelta(days=1)
 
-    # Obtener código de acceso, entrega idAcceso (int), imagen (str), success (bool) y message (str)
-    payload = {
-        "aplicacion": settings.CONTROL_ACCESO_APLICACION,
-        "referencia": generar_referencia(current_user.email, cit_servicio.clave, oficina.clave, inicio_dt),
-        "nombres": current_user.nombres,
-        "apellidos": f"{current_user.apellido_primero} {current_user.apellido_segundo}",
-        "correoElectronico": current_user.email,
-        "telefono": f"+52{current_user.telefono}",
-        "Duracion": 60,
-        "fecha": inicio_dt.isoformat(timespec="minutes"),
-        "cita": True,
-        "PrivilegeGroups": [],
-    }
-    try:
-        respuesta = requests.post(
-            url=settings.CONTROL_ACCESO_URL,
-            headers={"X-Api-Key": settings.CONTROL_ACCESO_API_KEY},
-            timeout=settings.CONTROL_ACCESO_TIMEOUT,
-            json=payload,
-        )
-    except requests.exceptions.ConnectionError as error:
-        return OneCitCitaOut(success=False, message=f"ERROR: No responde Control Acceso: {str(error)}")
-    if respuesta.status_code != 200:
-        return OneCitCitaOut(
-            success=False, message=f"ERROR: No fue código 200 la respuesta de Control Acceso: {respuesta.text}"
-        )
-    contenido = respuesta.json()
-    if contenido.get("success") is False:
-        return OneCitCitaOut(
-            success=False, message=f"ERROR: Falló la obtención del Código de Acceso: {contenido.get('message')}"
-        )
-    codigo_acceso_id = contenido.get("idAcceso")
-    if not codigo_acceso_id:
-        return OneCitCitaOut(success=False, message="ERROR: Faltó la idAcceso en la respuesta de Control Acceso")
-    codigo_acceso_url = contenido.get("imagen")
-    if not codigo_acceso_url:
-        return OneCitCitaOut(success=False, message="ERROR: Faltó la imagen en la respuesta de Control Acceso")
+    codigo_acceso_id = None
+    codigo_acceso_url = None
+    codigo_barras_num = None
+    codigo_barras_url = None
+    if oficina.puede_enviar_qr:
+        # Obtener código de acceso, entrega idAcceso (int), imagen (str), success (bool) y message (str)
+        payload = {
+            "aplicacion": settings.CONTROL_ACCESO_APLICACION,
+            "referencia": generar_referencia(current_user.email, cit_servicio.clave, oficina.clave, inicio_dt),
+            "nombres": current_user.nombres,
+            "apellidos": f"{current_user.apellido_primero} {current_user.apellido_segundo}",
+            "correoElectronico": current_user.email,
+            "telefono": f"+52{current_user.telefono}",
+            "Duracion": 60,
+            "fecha": inicio_dt.isoformat(timespec="minutes"),
+            "cita": True,
+            "PrivilegeGroups": [],
+        }
+        try:
+            respuesta = requests.post(
+                url=settings.CONTROL_ACCESO_URL,
+                headers={"X-Api-Key": settings.CONTROL_ACCESO_API_KEY},
+                timeout=settings.CONTROL_ACCESO_TIMEOUT,
+                json=payload,
+            )
+        except requests.exceptions.ConnectionError as error:
+            return OneCitCitaOut(success=False, message=f"ERROR: No responde Control Acceso: {str(error)}")
+        if respuesta.status_code != 200:
+            return OneCitCitaOut(
+                success=False, message=f"ERROR: No fue código 200 la respuesta de Control Acceso: {respuesta.text}"
+            )
+        contenido = respuesta.json()
+        if contenido.get("success") is False:
+            return OneCitCitaOut(
+                success=False, message=f"ERROR: Falló la obtención del Código de Acceso: {contenido.get('message')}"
+            )
+        codigo_acceso_id = contenido.get("idAcceso")
+        if not codigo_acceso_id:
+            return OneCitCitaOut(success=False, message="ERROR: Faltó la idAcceso en la respuesta de Control Acceso")
+        codigo_acceso_url = contenido.get("imagen")
+        if not codigo_acceso_url:
+            return OneCitCitaOut(success=False, message="ERROR: Faltó la imagen en la respuesta de Control Acceso")
+
+        # Crear el código de barras de asistencia
+        codigo_barras = CodigoBarras(database)
+        try:
+            codigo_barras_num, codigo_barras_url = codigo_barras.crear_y_subir()
+        except ConnectionError as e:
+            # Captura errores de conexión o de la API de Google Storage
+            return OneCitCitaOut(success=False, message=f"ERROR: Falló la comunicación para generar el código de barras de asistencia. {e}")
+        except Exception as e:
+            # Captura cualquier otro error inesperado durante la generación
+            return OneCitCitaOut(success=False, message=f"ERROR: No se pudo generar el código de barras de asistencia. {e}")
 
     # Guardar
     cit_cita = CitCita(
@@ -271,6 +289,8 @@ async def crear(
         codigo_asistencia=generar_codigo_asistencia(),
         codigo_acceso_id=codigo_acceso_id,
         codigo_acceso_url=codigo_acceso_url,
+        codigo_barras=codigo_barras_num,
+        codigo_barras_url=codigo_barras_url,
     )
     database.add(cit_cita)
     database.commit()
@@ -284,8 +304,8 @@ async def crear(
         servicio=cit_cita.cit_servicio_descripcion,
         fecha_hora_cita=cit_cita.inicio,
         notas=cit_cita.notas,
-        codigo_asistencia=cit_cita.codigo_asistencia,
         codigo_qr_url=cit_cita.codigo_acceso_url,
+        codigo_barras_url=cit_cita.codigo_barras_url,
     )
 
     # Envío de email
@@ -360,8 +380,8 @@ async def mis_citas(
     current_user: Annotated[CitClienteInDB, Depends(get_current_active_user)],
     database: Annotated[Session, Depends(get_db)],
 ):
-    """Mis PROPIAS citas en estado PENDIENTE"""
+    """Mis PROPIAS citas en estado PENDIENTE o ASISTIO"""
     if current_user.permissions.get("CIT CITAS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    consulta = database.query(CitCita).filter(CitCita.cit_cliente_id == current_user.id).filter(CitCita.inicio >= datetime.now()).filter(CitCita.estado == "PENDIENTE").filter(CitCita.estatus == "A")
-    return paginate(consulta.filter(CitCita.estatus == "A").order_by(CitCita.creado.desc()))
+    consulta = database.query(CitCita).filter(CitCita.cit_cliente_id == current_user.id).filter(func.date(CitCita.inicio) >= datetime.now().date()).filter(CitCita.estado.in_(["PENDIENTE", "ASISTIO"])).filter(CitCita.estatus == "A")
+    return paginate(consulta.order_by(CitCita.inicio.desc()))

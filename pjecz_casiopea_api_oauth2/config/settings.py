@@ -35,6 +35,8 @@ class Settings(BaseSettings):
     SENDGRID_FROM_EMAIL: str = os.getenv("SENDGRID_FROM_EMAIL", "")
     TASK_QUEUE: str = os.getenv("TASK_QUEUE", "pjecz_casiopea")
     TZ: str = os.getenv("TZ", "America/Mexico_City")
+    GOOGLE_APPLICATION_CREDENTIALS: str = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
+    GCS_BUCKET_NAME: str = os.getenv("GCS_BUCKET_NAME", "")
 
     class Config:
         """Load configuration"""

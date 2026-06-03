@@ -3,6 +3,35 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.4.0] - 2026-05-29
+
+### ✨ Mejoras
+
+- Mantener en mis citas, también las marcadas con estado "ASISTIO" para que pueda salir el cliente con el mismo QR.
+- Al entregar las citas agendadas de un cliente, solo se entregan las que son de hoy en adelante, están en estado de Pendiente y activas.
+- Validar el campo booleano `oficinas.puede_enviar_qr` para incluir el código QR y código de barras de asistencia en los emails al crear una cita.
+- Mejorado el mensaje de error al fallar la generación del código de barras de asistencia.
+- Añadido el código de barras de asistencia a la plantilla de cita creada.
+- Nuevo servicio para creación de un código de barras para identificar la cita. Con esto se podrá marcar la asistencia del cliente y añadirlo al sistema de turnos.
+
+### ❌ Eliminado
+
+- Se quitó el código de asistencia en la plantilla de cita creada. Será remplazado por el código de barras de asistencia en su lugar.
+
+### ⚙️ Requerimientos
+
+- Actualización de BD, ejecutar _scripts_ de migración con `psql -f [nombre_archivo.sql]`:
+    - `v1.4.0-01-anadir-campo-codigo_barras.sql`.
+
+- Añadir paquetes de librerías con `uv add [lib]`:
+    - `python-barcode pillow`
+    - `google-cloud-storage`
+
+- Añadir nuevas variables de entorno:
+    - `GOOGLE_APPLICATION_CREDENTIALS`
+    - `GCS_BUCKET_NAME`
+
+
 ## [1.3.0] - 2026-05-22
 
 ### ✨ Mejoras
