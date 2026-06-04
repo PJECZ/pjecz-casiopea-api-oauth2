@@ -3,6 +3,12 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.4.1] - 2026-06-04
+
+### 🛠️ Cambios
+
+- Se pasó el tiempo de expiración para volver a ser otro intento de registro y cambios de contraseña de los clientes de 48 horas a 24 horas.
+
 ## [1.4.0] - 2026-05-29
 
 ### ✨ Mejoras

@@ -1,6 +1,6 @@
 [project]
 name = "pjecz-casiopea-api-oauth2"
-version = "1.4.0"
+version = "1.4.1"
 description = "API con autentificación OAuth2 para el sistema de citas."
 authors = [
     "Guillermo Valdes <guillermo.valdes@pjecz.gob.mx>",
