@@ -25,7 +25,7 @@ from ..schemas.cit_clientes_registros import (
 )
 from ..services.sendmail import MyRequestError, Email, PlantillaClienteCompletado, PlantillaClienteValidarCuenta
 
-EXPIRACION_HORAS = 48
+EXPIRACION_HORAS = 24
 LIMITE_CITAS_PENDIENTES = 3
 RENOVACION_DIAS = 365
 
