@@ -26,7 +26,7 @@ from ..schemas.cit_clientes_recuperaciones import (
 from ..services.sendmail import MyRequestError, Email, PlantillaClienteCambiarContrasena, PlantillaClienteCompletado
 
 
-EXPIRACION_HORAS = 48
+EXPIRACION_HORAS = 24
 RENOVACION_DIAS = 365
 
 cit_clientes_recuperaciones = APIRouter(prefix="/api/v5/cit_clientes_recuperaciones")
