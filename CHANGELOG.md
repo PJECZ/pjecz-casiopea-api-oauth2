@@ -7,6 +7,8 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### 🛠️ Cambios
 
+- Se cambió en las plantillas de email el texto "Código QR" por "Código de Acceso".
+- Se cambió en las plantillas de email el texto "Código de Barras" por "Código de Asistencia".
 - Se pasó el tiempo de expiración para volver a ser otro intento de registro y cambios de contraseña de los clientes de 48 horas a 24 horas.
 
 ## [1.4.0] - 2026-05-29
