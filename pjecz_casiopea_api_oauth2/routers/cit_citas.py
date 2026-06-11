@@ -177,10 +177,11 @@ async def crear(
             message="No se puede crear la cita porque ya se alcanzo el limite de personas en la oficina",
         )
 
-    # Validar que la cantidad de citas PENDIENTE del cliente NO haya llegado su límite
+    # Validar que la cantidad de citas PENDIENTE del cliente NO haya llegado su límite y que no sean pasadas
     cit_citas_cit_cliente_cantidad = (
         database.query(CitCita)
         .filter(CitCita.cit_cliente_id == current_user.id)
+        .filter(func.date(CitCita.inicio) >= datetime.now().date())
         .filter(CitCita.estado == "PENDIENTE")
         .filter(CitCita.estatus == "A")
         .count()

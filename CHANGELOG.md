@@ -3,6 +3,13 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.4.2] - 2026-06-11
+
+### 🛠️ Cambios
+
+- En la entrega de límite de citas, no contar las citas pasadas.
+
+
 ## [1.4.1] - 2026-06-04
 
 ### 🛠️ Cambios
