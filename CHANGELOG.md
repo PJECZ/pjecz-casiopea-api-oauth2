@@ -9,6 +9,10 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 - En la entrega de límite de citas, no contar las citas pasadas.
 
+### 🐞 Arreglado
+
+- El límite de citas por servicio-oficina es tomado, haciendo que los días y horas ya no aparezcan disponibles si ya está lleno.
+
 
 ## [1.4.1] - 2026-06-04
 
