@@ -129,9 +129,9 @@ async def crear(
     if cit_servicio.estatus != "A":
         return OneCitCitaOut(success=False, message="No está habilitado ese servicio")
 
-    # Validar que la oficina tenga el servicio dado
+    # Validar que la oficina tenga el servicio dado y obtener el límite de personas
     try:
-        _ = (
+        cit_oficina_servicio = (
             database.query(CitOficinaServicio)
             .filter_by(oficina_id=oficina.id)
             .filter_by(cit_servicio_id=cit_servicio.id)
@@ -140,13 +140,15 @@ async def crear(
         )
     except NoResultFound:
         return OneCitCitaOut(success=False, message="No se puede agendar el servicio en la oficina")
+    if not cit_oficina_servicio.es_activo:
+        return OneCitCitaOut(success=False, message="No está habilitado el servicio en la oficina")
 
     # Validar que la fecha sea un día disponible
     if cit_cita_in.fecha not in listar_dias_disponibles(database, settings):
         return OneCitCitaOut(success=False, message="No es válida la fecha")
 
     # Validar la hora_minuto, respecto a las horas disponibles
-    if cit_cita_in.hora_minuto not in listar_horas_disponibles(database, cit_servicio, oficina, cit_cita_in.fecha):
+    if cit_cita_in.hora_minuto not in listar_horas_disponibles(database, cit_servicio, oficina, cit_cita_in.fecha, cit_oficina_servicio.limite_personas):
         return OneCitCitaOut(success=False, message="No es valida la hora-minuto porque no esta disponible")
 
     # Definir el inicio de la cita
@@ -161,20 +163,21 @@ async def crear(
     # Definir el término de la cita
     termino_dt = inicio_dt + timedelta(hours=cit_servicio.duracion.hour, minutes=cit_servicio.duracion.minute)
 
-    # Validar que la cantidad de citas de la oficina en ese tiempo NO hayan llegado al límite
+    # Validar que la cantidad de citas del servicio en la oficina en ese tiempo NO hayan llegado al límite
     cit_citas_oficina_cantidad = (
         database.query(CitCita)
         .filter(CitCita.oficina_id == oficina.id)
+        .filter(CitCita.cit_servicio_id == cit_servicio.id)
         .filter(CitCita.inicio >= inicio_dt)
         .filter(CitCita.termino <= termino_dt)
-        .filter(CitCita.estado != "CANCELADO")
+        .filter(CitCita.estado != "CANCELO")
         .filter(CitCita.estatus == "A")
         .count()
     )
-    if cit_citas_oficina_cantidad >= oficina.limite_personas:
+    if cit_citas_oficina_cantidad >= cit_oficina_servicio.limite_personas:
         return OneCitCitaOut(
             success=False,
-            message="No se puede crear la cita porque ya se alcanzo el limite de personas en la oficina",
+            message="No se puede crear la cita porque ya se alcanzo el limite de personas para este servicio en la oficina",
         )
 
     # Validar que la cantidad de citas PENDIENTE del cliente NO haya llegado su límite y que no sean pasadas

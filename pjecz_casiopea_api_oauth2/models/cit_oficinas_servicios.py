@@ -29,6 +29,7 @@ class CitOficinaServicio(Base, UniversalMixin):
 
     # Columnas
     descripcion: Mapped[str] = mapped_column(String(256))
+    limite_personas: Mapped[int] = mapped_column(default=1)
     es_activo: Mapped[bool] = mapped_column(default=True)
 
     @property
