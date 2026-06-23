@@ -3,15 +3,23 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.4.3] - 2026-06-23 (trabajando)
+
+### 🐞 Arreglado
+
+- El límite de citas por servicio-oficina es tomado, haciendo que los días y horas ya no aparezcan disponibles si ya está lleno. CORRECCIÓN HECHA CON `CLAUDE CODE`
+
+### ⚙️ Requerimientos
+
+- Actualización de BD, ejecutar _scripts_ de migración con `psql -f [nombre_archivo.sql]`:
+    - `v1.5.0-01-anadir-campo-limite_personas-a-cit_oficinas_servicios.sql`.
+
+
 ## [1.4.2] - 2026-06-11
 
 ### 🛠️ Cambios
 
 - En la entrega de límite de citas, no contar las citas pasadas.
-
-### 🐞 Arreglado
-
-- El límite de citas por servicio-oficina es tomado, haciendo que los días y horas ya no aparezcan disponibles si ya está lleno.
 
 
 ## [1.4.1] - 2026-06-04
