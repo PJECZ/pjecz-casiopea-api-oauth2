@@ -3,7 +3,11 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
-## [1.4.3] - 2026-06-23 (trabajando)
+## [1.4.3] - 2026-06-29 (trabajando)
+
+### ✨ Mejoras
+
+- Se guarda el campo `codigo_acceso_url_whatsapp` en el _endpoint_ `crear_cita`. Al crear una cita nueva, se guarda los datos del sistema control de acceso.
 
 ### 🐞 Arreglado
 
