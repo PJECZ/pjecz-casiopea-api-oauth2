@@ -267,6 +267,9 @@ async def crear(
         codigo_acceso_url = contenido.get("imagen")
         if not codigo_acceso_url:
             return OneCitCitaOut(success=False, message="ERROR: Faltó la imagen en la respuesta de Control Acceso")
+        codigo_acceso_url_whatsapp = contenido.get("urlAcceso")
+        if not codigo_acceso_url_whatsapp:
+            return OneCitCitaOut(success=False, message="ERROR: Faltó la url de WhatsApp en la respuesta de Control Acceso")
 
         # Crear el código de barras de asistencia
         codigo_barras = CodigoBarras(database)
@@ -293,6 +296,7 @@ async def crear(
         codigo_asistencia=generar_codigo_asistencia(),
         codigo_acceso_id=codigo_acceso_id,
         codigo_acceso_url=codigo_acceso_url,
+        codigo_acceso_url_whatsapp=codigo_acceso_url_whatsapp,
         codigo_barras=codigo_barras_num,
         codigo_barras_url=codigo_barras_url,
     )
