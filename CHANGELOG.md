@@ -5,7 +5,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 >[!info] Basado en plantilla v1.1.0 (2026-10-28)
 
-## [1.4.3] - 2026-07-01 (trabajando)
+## [1.4.3] - 2026-10-28
 
 ### ✨ Mejoras
 
