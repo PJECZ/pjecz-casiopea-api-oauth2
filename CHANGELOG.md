@@ -3,6 +3,26 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+>[!info] Basado en plantilla v1.1.0 (2026-10-28)
+
+## [1.4.3] - 2026-10-28
+
+### ✨ Mejoras
+
+- Mejora en documentación de contribución, historial de cambios y deploy.
+- Se mejoró el código de barras, ahora se utiliza el primer dígito como personalizado para definir la aplicación _backend_ que lo crea y a la cual debe comunicarse el _frontend_ cuando lo lea.
+- Se guarda el campo `codigo_acceso_url_whatsapp` en el _endpoint_ `crear_cita`. Al crear una cita nueva, se guarda los datos del sistema control de acceso.
+
+### 🐞 Arreglado
+
+- El límite de citas por servicio-oficina es tomado, haciendo que los días y horas ya no aparezcan disponibles si ya está lleno. CORRECCIÓN HECHA CON `CLAUDE CODE`
+
+### ⚙️ Requerimientos
+
+- Actualización de BD, ejecutar _scripts_ de migración con `psql -f [nombre_archivo.sql]`:
+    - `v1.5.0-01-anadir-campo-limite_personas-a-cit_oficinas_servicios.sql`.
+
+
 ## [1.4.2] - 2026-06-11
 
 ### 🛠️ Cambios
@@ -87,3 +107,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 ### 🐞 Arreglado
 
 - Locale, integración con el sistema operativo sobre el idioma de la fecha.
+
+---
+
+© 2026 Poder Judicial del Estado de Coahuila de Zaragoza.

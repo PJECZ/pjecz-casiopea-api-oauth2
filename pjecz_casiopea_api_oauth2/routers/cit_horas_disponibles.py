@@ -14,6 +14,7 @@ from ..dependencies.database import Session, get_db
 from ..dependencies.safe_string import safe_clave
 from ..models.cit_citas import CitCita
 from ..models.cit_horas_bloqueadas import CitHoraBloqueada
+from ..models.cit_oficinas_servicios import CitOficinaServicio
 from ..models.cit_servicios import CitServicio
 from ..models.oficinas import Oficina
 from ..models.permisos import Permiso
@@ -29,6 +30,7 @@ def listar_horas_disponibles(
     cit_servicio: CitServicio,
     oficina: Oficina,
     fecha: date,
+    limite_personas: int = 1,
 ) -> list[time]:
     """Listar las horas disponibles"""
 
@@ -101,13 +103,15 @@ def listar_horas_disponibles(
     inicio_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=0, minute=0, second=0)
     termino_dt = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=23, minute=59, second=59)
 
-    # Consultar las citas agendadas
+    # Consultar las citas agendadas para este servicio en esta oficina
     cit_citas = (
         database.query(CitCita)
         .filter(CitCita.oficina_id == oficina.id)
+        .filter(CitCita.cit_servicio_id == cit_servicio.id)
         .filter(CitCita.inicio >= inicio_dt)
         .filter(CitCita.inicio <= termino_dt)
         .filter(CitCita.estado != "CANCELO")
+        .filter(CitCita.estatus == "A")
         .all()
     )
 
@@ -133,7 +137,7 @@ def listar_horas_disponibles(
                 break
         # Quitar las horas ocupadas
         if tiempo in citas_ya_agendadas:
-            if citas_ya_agendadas[tiempo] >= oficina.limite_personas:
+            if citas_ya_agendadas[tiempo] >= limite_personas:
                 es_hora_disponible = False
         # Acumular si es hora disponible
         if es_hora_disponible:
@@ -180,6 +184,20 @@ async def listado(
     if cit_servicio.estatus != "A":
         return ListCitHoraDisponibleOut(success=False, message="No está habilitado ese servicio")
 
+    # Validar que la oficina tenga el servicio dado y obtener el límite de personas
+    try:
+        cit_oficina_servicio = (
+            database.query(CitOficinaServicio)
+            .filter_by(oficina_id=oficina.id)
+            .filter_by(cit_servicio_id=cit_servicio.id)
+            .filter_by(estatus="A")
+            .one()
+        )
+    except (MultipleResultsFound, NoResultFound):
+        return ListCitHoraDisponibleOut(success=False, message="No se puede agendar el servicio en la oficina")
+    if not cit_oficina_servicio.es_activo:
+        return ListCitHoraDisponibleOut(success=False, message="No está habilitado el servicio en la oficina")
+
     # Validar la fecha
     if fecha not in listar_dias_disponibles(database, settings):
         return ListCitHoraDisponibleOut(success=False, message="La fecha proporcionada no es válida")
@@ -190,6 +208,7 @@ async def listado(
         cit_servicio=cit_servicio,
         oficina=oficina,
         fecha=fecha,
+        limite_personas=cit_oficina_servicio.limite_personas,
     )
 
     # Si no hay disponibilidad, entregar success falso y con mensaje de que no hay

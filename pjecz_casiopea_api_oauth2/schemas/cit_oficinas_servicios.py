@@ -13,4 +13,5 @@ class CitOficinaServicioOut(BaseModel):
     oficina_clave: str
     oficina_descripcion: str
     oficina_descripcion_corta: str
+    limite_personas: int
     model_config = ConfigDict(from_attributes=True)
