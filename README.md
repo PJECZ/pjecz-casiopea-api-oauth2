@@ -1,39 +1,42 @@
-# 🏛️ [pjecz-casiopea-api-oauth2]
+# 🏛️ pjecz-casiopea-api-oauth2
 
 > API OAuth2 para dar servicio al proyecto _Frontend_ del sistema de citas SAJI.
 
-Proyectos relaccionados:
+>[!info] Basado en plantilla v1.1.0 (2026-10-28)
+
+## 🗃️ Proyectos relacionados:
+
 - [pjecz-casiopea-api-key](https://github.com/PJECZ/pjecz-casiopea-api-key)
 - [pjecz-casiopea-reactjs](https://github.com/PJECZ/pjecz-casiopea-reactjs)
 - [pjecz-casiopea-flask](https://github.com/PJECZ/pjecz-casiopea-flask)
 
----
-
-## 📋 Tabla de Contenidos
-- [Descripción General](#descripción-general)
-- [Tecnologías Utilizadas](#tecnologías-utilizadas)
-- [Requisitos Previos](#requisitos-previos)
-- [Instalación y Configuración](#instalación-y-configuración)
-- [Estructura de Ramas](#estructura-de-ramas)
-- [Despliegue](#despliegue)
-- [Contacto](#contacto)
-
----
-
 ## 📖 Descripción General
+
 Es parte de un conjunto de proyecto para otorgar la comunicación vía por API's tipo OAuth2 al sistema _frontend_ que forma parte del **Sistema de citas SAJI** con cara al público. En este sistema hacemos la comunicación con base de datos y se aplican las reglas del negocio.
 
 ## 🛠️ Tecnologías Utilizadas
+
 * **Lenguaje:** Python 3.14
 * **Framework:** FastAPI
 * **Base de Datos:** PostgreSQL
 * **Servidor:** Nginx
 
 ## ⚙️ Requisitos Previos
+
 Lista de herramientas necesarias para correr el proyecto localmente:
 - Git
 - Python
 - uv - manejador de paquetes para Python
+
+## 🧩 IDE y sus extensiones recomendadas
+
+Como IDE para este proyecto se recomienda **VS Code** y para mayor complemento se pueden instalar las siguientes extensiones:
+
+- **Material Icon Theme** ~ _Philipp Kief_ – Mejora los iconos en el árbol de archivos.
+- **Git Graph** ~ *mhutchie* – Muestra de manera gráfica el historial Git del proyecto.
+- **GitHub Pull Request** ~ *GitHub* – Permite hacer Pull Request desde VSCode.
+- **indent-rainbow** ~ *oderwat* – Da apoyo visual a las identaciones en el código.
+- **WSL** ~ *Microsoft* – Para abrir e editar proyectos dentro del directorio WSL de Windos.
 
 ## 🚀 Instalación y Configuración
 
@@ -64,9 +67,23 @@ uv run flask run --host=0.0.0.0 --port=5022
 Este proyecto sigue el flujo de trabajo institucional:
 - `main`: Rama de producción (Solo código estable).
 - `dev`: Rama de integración y pruebas (_staging_).
-- `feature/*`: Ramas temporales para nuevas funcionalidades.
+- `mejora/*`: Ramas temporales para nuevas funcionalidades.
 
 Ver más sobre como contribuir: [CONTRIBUTING](CONTRIBUTING.md)
+
+## 📝 Documentar cambios
+
+Archivo que almacena los cambios efectuados en el proyecto, su propósito es informar a los usuarios y desarrolladores qué ha cambiado exactamente entre versiones.
+
+**Definición Oficial**: Un registro de cambios, «changelog» de ahora en adelante, es un archivo que contiene una lista cronológicamente ordenada de los cambios más destacables para cada versión de un proyecto.
+
+Recuerde que con cada entrega debe añadir la mejora, arreglo, modificación o eliminación hecha por ese _commit_. Como recomendación, dejé abierto este documento siempre que trabaje en el proyecto y vaya indicado los cambios que hace. Cuando haga un _deploy_ añada la fecha de entrega a la última versión en la que se trabajó.
+
+Lleve ese registro en el archivo: [CHANGELOG](CHANGELOG.md)
+
+## 🚚 Deploy
+
+Instrucciones de cómo hacer un deploy si sigue el flujo de trabajo **GitFlow - Simplificado** y su proyecto está alojado en **GitHub**. Véase: [DEPLOY](DEPLOY.md)
 
 ## 🚢 Despliegue
 
