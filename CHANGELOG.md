@@ -5,6 +5,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 >[!info] Basado en plantilla v1.1.0 (2026-10-28)
 
+## [1.4.4] - 2026-11-05
+
+### 🐞 Arreglado
+
+- Al crear una cita de una oficina que NO enviaba código de QR, el campo para obtener `codigo_acceso_url_whatsapp` no se declaraba.
+
 ## [1.4.3] - 2026-10-28
 
 ### ✨ Mejoras
