@@ -5,6 +5,18 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 >[!info] Basado en plantilla v1.1.0 (2026-10-28)
 
+## [1.4.5] - 2026-11-06
+
+### ✏️ Cambios
+
+- Cambiar el orden de entrega del listado de juzgados de los que se puede pedir el servicio de consulta de expedientes `exp_juzgados`. Antes era por el campo `clave` ahora es por `descripcion`.
+
+### ❌ Eliminado
+
+- Archivos de migración de Base de Datos:
+    - `sql/v1.4.0-01-anadir-campo-codigo_barras.sql`
+    - `sql/v1.5.0-01-anadir-campo-limite_personas-a-cit_oficinas_servicios.sql`
+
 ## [1.4.4] - 2026-11-05
 
 ### 🐞 Arreglado

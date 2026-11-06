@@ -51,4 +51,4 @@ async def paginado(
     if current_user.permissions.get("EXP JUZGADOS", 0) < Permiso.VER:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
     consulta = database.query(ExpJuzgado)
-    return paginate(consulta.filter(ExpJuzgado.estatus == "A").order_by(ExpJuzgado.clave))
+    return paginate(consulta.filter(ExpJuzgado.estatus == "A").order_by(ExpJuzgado.descripcion))
