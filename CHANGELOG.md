@@ -5,6 +5,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 >[!info] Basado en plantilla v1.1.0 (2026-10-28)
 
+## [1.4.6] - 2026-11-09
+
+### 🐞 Arreglado
+
+- En la entrega de listado de oficinas, no se filtraba con el valor del campo `puede_agendar_cita`. Ahora es tomado en cuenta.
+
 ## [1.4.5] - 2026-11-06
 
 ### ✏️ Cambios
