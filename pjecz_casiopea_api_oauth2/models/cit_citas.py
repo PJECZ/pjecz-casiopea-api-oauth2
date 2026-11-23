@@ -54,6 +54,7 @@ class CitCita(Base, UniversalMixin):
     codigo_acceso_url_whatsapp: Mapped[Optional[str]] = mapped_column(String(512))
     codigo_barras: Mapped[Optional[str]] = mapped_column(String(13))
     codigo_barras_url: Mapped[Optional[str]] = mapped_column(String(512))
+    api_key_o_oauth2: Mapped[Optional[bool]] = mapped_column(default=None)
 
     # @property
     # def codigo_acceso_imagen_base64(self):

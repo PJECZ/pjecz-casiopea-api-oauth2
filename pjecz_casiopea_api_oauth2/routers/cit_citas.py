@@ -300,6 +300,7 @@ async def crear(
         codigo_acceso_url_whatsapp=codigo_acceso_url_whatsapp,
         codigo_barras=codigo_barras_num,
         codigo_barras_url=codigo_barras_url,
+        api_key_o_oauth2=True,
     )
     database.add(cit_cita)
     database.commit()

@@ -5,13 +5,20 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 >[!info] Basado en plantilla v1.1.0 (2026-10-28)
 
-## [1.4.6] - 2026-11-09
+## [1.5.0] 2026-11-23
+
+### ✨ Mejoras
+
+- Se marca el origen de la creación de la cita, en el nuevo campo `api_key_o_oauth2` en la tabla `cit_citas`. Para ser tipo "OAuth2" hay que guardar el valor `True`.
+
+
+## [1.4.6] 2026-11-09
 
 ### 🐞 Arreglado
 
 - En la entrega de listado de oficinas, no se filtraba con el valor del campo `puede_agendar_cita`. Ahora es tomado en cuenta.
 
-## [1.4.5] - 2026-11-06
+## [1.4.5] 2026-11-06
 
 ### ✏️ Cambios
 
@@ -23,13 +30,13 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
     - `sql/v1.4.0-01-anadir-campo-codigo_barras.sql`
     - `sql/v1.5.0-01-anadir-campo-limite_personas-a-cit_oficinas_servicios.sql`
 
-## [1.4.4] - 2026-11-05
+## [1.4.4] 2026-11-05
 
 ### 🐞 Arreglado
 
 - Al crear una cita de una oficina que NO enviaba código de QR, el campo para obtener `codigo_acceso_url_whatsapp` no se declaraba.
 
-## [1.4.3] - 2026-10-28
+## [1.4.3] 2026-10-28
 
 ### ✨ Mejoras
 
@@ -47,14 +54,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
     - `v1.5.0-01-anadir-campo-limite_personas-a-cit_oficinas_servicios.sql`.
 
 
-## [1.4.2] - 2026-06-11
+## [1.4.2] 2026-06-11
 
 ### 🛠️ Cambios
 
 - En la entrega de límite de citas, no contar las citas pasadas.
 
 
-## [1.4.1] - 2026-06-04
+## [1.4.1] 2026-06-04
 
 ### 🛠️ Cambios
 
@@ -62,7 +69,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Se cambió en las plantillas de email el texto "Código de Barras" por "Código de Asistencia".
 - Se pasó el tiempo de expiración para volver a ser otro intento de registro y cambios de contraseña de los clientes de 48 horas a 24 horas.
 
-## [1.4.0] - 2026-05-29
+## [1.4.0] 2026-05-29
 
 ### ✨ Mejoras
 
@@ -91,7 +98,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
     - `GCS_BUCKET_NAME`
 
 
-## [1.3.0] - 2026-05-22
+## [1.3.0] 2026-05-22
 
 ### ✨ Mejoras
 
@@ -104,7 +111,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Archivo `.env.example` como ejemplo de la configuración de variables de entorno.
 
 
-## [1.2.1] - 2026-05-20
+## [1.2.1] 2026-05-20
 
 ### ✨ Mejoras
 
@@ -120,7 +127,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - El _endpoint_ `mis_citas` ahora filtra que las citas no estén eliminadas y no sean pasadas a la fecha de hoy.
 
 
-## [1.1.3] - 2026-04-26
+## [1.1.3] 2026-04-26
 
 ### ✨ Mejoras
 
